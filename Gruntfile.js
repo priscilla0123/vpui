@@ -82,7 +82,7 @@ module.exports = function(grunt) {
                     },
                     context: '{CMD}',
                     reName: function (name) {
-                        return '_tpl';
+                        return 'tpl';
                     }
                 },
                 files: [{

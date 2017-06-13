@@ -1,4 +1,4 @@
-import template from './_tpl.js';
+import template from './tpl.js';
 export default {
     props: {
         'option': {
