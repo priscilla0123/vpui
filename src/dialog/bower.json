@@ -1,6 +1,6 @@
-{
-  "name": "vpager",
-  "desc": "vpui-pager",
+{ 
+  "name": "vdialog",
+  "desc": "vpui-dialog", 
   "main": "index.js",
   "version": "1.0.0",
   "dependencies": { 
