@@ -1,4 +1,4 @@
-import template from './index.tpl'; 
+import template from './_tpl.js'; 
 export default {
     props: {
         'model': {
