@@ -1,4 +1,4 @@
 {
-    "./vm.js": "./src/**.{vue,js}",
-    "./vm.css": "./src/**.{less,css}"
+    "./vpui.js": "./src/**.{vue,js}",
+    "./vpui.css": "./src/**.{less,css}"
 }
