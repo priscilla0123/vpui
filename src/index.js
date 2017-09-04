@@ -1,9 +1,10 @@
 import Pager from './components/pager';
+import Table from './components/table';
 
 import Vue from 'vue';
 
 var Components = [
-    Pager 
+    Pager,Table 
 ];
 
 function install(Vue){
@@ -13,7 +14,7 @@ function install(Vue){
 }
 
 export {
-    Pager
+    Pager,Table
 };
 
 export default {install};
