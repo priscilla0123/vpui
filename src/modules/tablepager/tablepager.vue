@@ -1,31 +1,34 @@
 <template>
-    <pager :total="pages" :current="current" :position="position" :volumn="volumn">
-        <slot name="after">
-            ,{{total}}条
-        </slot>
-    <pager>
+    <pager :total="pages" :current="cur" :position="position" :volumn="volumn" @to="to" ref="pager">
+        <div class="lg-tablepager-option" slot="before">
+            <span>每页</span>
+            <select  v-model="pageSize" @change="changeSize(pageSize)">
+                <option v-for="num in sizeList" :value="num">{{num}}条</option>
+            </select> 
+        </div>
+        <div class="lg-tablepager-option" slot="after"> 
+            <span class="lg-tablepager-total">,&nbsp;{{total}}条</span>
+        </div>
+    </pager>
 </template>
 <style> 
-.lg-pager-shortcut select {
+.lg-tablepager-option{
+    border:1px solid transparent;
+}
+select {
     height: 24px;
-    width: 38px;
-    padding: 0px;
+    width: auto;
+    padding: 0 3px;
     outline: none;
     text-align: center;
-    margin: 0px;
+    margin: 0 5px;
     border-radius: 3px;
     border: 1px solid #a3a3a3;
     box-size: border-box;
-}
-
-.lg-pager-shortcut select {
-    padding: 0 3px;
-    width: auto;
-    margin: 0 5px;
 } 
 </style>
 <script>
-import Pager from '../../compontents/pager';
+import Pager from '../../components/pager';
 var Tablepager = {
     name: 'tablepager',
     props: {
@@ -38,14 +41,20 @@ var Tablepager = {
             require: true,
             default: 1
         },
+        'position': {
+            type: String,
+            default:'center'
+        },
         'size':{
             type: Number,
             require: true,
             default: 10
         },
-        'position': {
-            type: String,
-            default:'center'
+        'sizeList': {
+            type: Array,
+            default () {
+                return [10,20,50];
+            }
         },
         'volumn': {
             type: Number,
@@ -57,41 +66,30 @@ var Tablepager = {
     },
     methods: {
         to(current) {
-            var cur = Number(current);
-            if (isNaN(cur)) {
-                alert('别任性~');
-                return;
-            }
-            if (cur <= this.pager.total && cur >= 1 && cur != this.pager.current) {
-                this.calculate(cur);
-                this.$emit('to', cur);
-            }
+            this.$emit('to', current,this.pageSize); 
+            this.cur=current;
         },
-        calculate(current) {
-             
-        },
-        update() {
-            this.vol = this.volumn;
-            this.pre = Math.floor((this.vol - 3) / 2);
-            this.next = Math.ceil((this.vol - 3) / 2);
-            this.pager.total = this.total;
-            this.calculate(this.current);
-        }
+        changeSize(size) {
+            this.pageSize=size; 
+            this.$refs.pager.shortcut='';
+            this.$refs.pager.to(1);             
+        } 
     },
     data() {
+        var size=this.size;
+        if(this.sizeList&&this.sizeList.indexOf(this.size)==-1)
+            size=this.sizeList[0];
         return {
-            pages: Math.ceil(this.total / this.size)
+            pageSize:size,
+            cur:this.current
         }
-    },
-    created() {
-        this.update();
     },
     computed: {
-        pagesUpdate() {
-            return Math.ceil(this.total / this.size);
+        pages() {
+            return Math.ceil(this.total / this.pageSize);
         }
     },
-    compontents:{
+    components:{
         Pager
     }
 }
