@@ -111,11 +111,11 @@
 var Table = {
     name: 'table',
     props: {
-        'thead': {
+        'head': {
             type: Object,
             require: true
         },
-        'tdata': {
+        'data': {
             type: Array,
             require: true
         },
