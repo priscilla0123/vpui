@@ -1,22 +1,23 @@
 <template> 
-    <vp-table :thead="table.head" :tdata="table.data" :colspan="table.colspan"></vp-table>
+    <vp-grid :thead="table.head" :tdata="table.data" :colspan="table.colspan"></vp-grid>
 </template>
 
 
 <script>
     import {
-        Table
+        Grid
     } from 'vpui';
 
     export default{
         components: {
-            "vp-table":Table
+            "vp-grid":Grid
         },
         data(){
             return {
                 table:{
                     head:{
-                        sName: '姓名',
+                        sName: {label:'姓名',type:'checkbox'},
+                        sMoblie: {label:'姓名',type:'checkbox'},
                         sMoblie: '手机号码',
                         sCityName: '城市',
                         sCreateTime: '抽奖时间',

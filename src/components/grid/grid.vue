@@ -1,28 +1,23 @@
 <template>
     <div class="lg-table-scroll">
         <button class="lg-btn-small" :class="btn.class" :disabled="btn.disabled" v-for="btn in btns" v-html="btn.label" @click="btnClick(btn)"></button>
-        <table class="lg-table" :style="noscroll?'':'min-width:1200px'">
+        <table class="lg-table" :style="scroll?'min-width:1200px' : ''">
             <thead>
                 <tr>
                     <th v-for="head in aHead">
                         <span v-if="head.type=='checkbox'" class="lg-checkbox">
-                        <input type="checkbox" :id="'vtable_chb'+head.key" @click="checkAll($event,head.key)" :checked="aCheckGroup[head.key].length==aData.length && aData.length"/>
-                        <label v-html="head.label" :for="'vtable_chb'+head.key"></label>
-                    </span>
+                            <input type="checkbox" :id="'vpgrid_chb'+head.key" @click="checkAll($event,head.key)" />
+                            <label v-html="head.label" :for="'vpgrid_chb'+head.key"></label>
+                        </span>
                         <span v-else v-html="head.label"></span>
                         <span v-if="head.sort" class="sort" :class="{'up':head.sort.desc===false,'down':head.sort.desc}" @click="sort($event,head.sort)"></span>
-                        <vtip v-if="head.tip" :content="head.tip.content" :option="head.tip.option"></vtip>
                     </th>
                 </tr>
             </thead>
             <tbody v-if="aData.length>0">
                 <tr v-for="(item, index) in aData">
                     <td v-for="(field,key) in thead" class="nowrap">
-                        <div v-if="field.type=='bodytip'" style="position:relative">
-                            <span v-html="item[key].text" :title="item[key].text"></span>
-                            <vtip :content="item[key].tip.content" :option="item[key].tip.option"></vtip>
-                        </div>
-                        <span v-else-if="field.type=='checkbox'" class="lg-checkbox">
+                        <span v-if="field.type=='checkbox'" class="lg-checkbox">
                         <input type="checkbox" :name="key" :id="key+'_'+item[key].id" v-model="aCheckGroup[key]" @click="check($event,key,index)" :value="item[key].id"/><label v-html="item[key].label" :for="key+'_'+item[key].id"></label>
                     </span>
                         <span v-else-if="field.type=='radio'" class="lg-radio">
@@ -98,24 +93,21 @@
         }
     }
 
-    .lg-tiphand {
-        height: 20px;
-        line-height: 20px;
-    }
+
     a {
         margin: 0 5px;
     }
 }
 </style>
 <script>
-var Table = {
+var Grid = {
     name: 'table',
     props: {
-        'head': {
+        'thead': {
             type: Object,
             require: true
         },
-        'data': {
+        'tdata': {
             type: Array,
             require: true
         },
@@ -131,9 +123,10 @@ var Table = {
             type: Object,
             require: false
         },
-        'noscroll': {
+        'scroll': {
             type: Boolean,
-            require: false
+            require: false,
+            default: true
         }
     },
     methods: {
@@ -213,11 +206,6 @@ var Table = {
                 thead[e].sort.desc = this.thead[e].sort.desc || '';
                 thead[e].sort.arg = this.thead[e].sort.arg || e;
             }
-            if (this.thead[e].tip) {
-                thead[e].tip = {};
-                thead[e].tip.option = this.thead[e].tip.option || { direction: 'b' };
-                thead[e].tip.content = this.thead[e].tip.content || '';
-            }
             if (this.thead[e].type == "checkbox") {
                 checkGroup[e] = [];
                 hasCheckbox = true;
@@ -239,6 +227,11 @@ var Table = {
     },
     created: function() {
         var _this = this;
+    },
+    computed: {
+        isChecked(groupId) {
+            return aCheckGroup[groupId].length == aData.length && aData.length;
+        }
     },
     watch: {
         'tdata': function(newV) {
@@ -286,5 +279,5 @@ var Table = {
         }
     }
 }
-export default Table;
+export default Grid;
 </script>

@@ -1,5 +1,6 @@
 import Pager from './components/pager';
-import Table from './components/table';
+import Grid from './components/grid';
+import Button from './components/button';
 //--------------------------------------------------------
 import Tablepager from './modules/tablepager';
 //--------------------------------------------------------
@@ -8,7 +9,7 @@ import Valid from './directives/valid';
 import Vue from 'vue';
 
 var Components = [
-    Pager,Table 
+    Pager,Grid ,
 ];
 
 var Modules = [
@@ -26,17 +27,17 @@ function install(Vue){
     for(let Module of Modules){
         Vue.use(Module);
     }
-    for(let Directive of Directives){
+     for(let Directive of Directives){
         Vue.use(Directive);
     }
 }
 
 export {
-    Pager,Table,
+    Pager,Grid,
 
     Tablepager,
 
-    Valid
+    Button
 };
 
 export default {install};
