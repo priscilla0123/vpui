@@ -1,18 +1,34 @@
 <template>
-<div>
-    <vp-grid :head="table.head" :data="table.data" :colspan="table.colspan" @grid:checkbox="click" @grid:checkall="checkall" @grid:switch="switcher" @grid:sort="sort" @grid:action="action">
-    </vp-grid>
-
-    <vp-grid :head="table.head" :data="table.data" :colspan="table.colspan" @grid:checkbox="click" @grid:checkall="checkall" @grid:switch="switcher" @grid:sort="sort">
-        <template slot="header" scope="props">
-            <span v-html="'<b>'+props.data.label||props.data+'</b>'"></span>
-        </template>
-        <template slot="cell" scope="props">
-            <span v-html="'<b>'+props.data.key+'</b>'"></span>
-        </template>
-    </vp-grid>
+    <div>
+        <vp-grid :head="table.head" :data="table.data" :colspan="table.colspan" @grid:checkbox="click" @grid:checkall="checkall" @grid:switch="switcher" @grid:sort="sort" @grid:action="action">
+        </vp-grid>
+        <vp-grid :head="table.head" :data="table.data" :colspan="table.colspan" @grid:checkbox="click" @grid:checkall="checkall" @grid:switch="switcher" @grid:sort="sort">
+            <template slot="header" scope="props">
+                <span v-html="'<b>'+props.data.label||props.data+'</b>'"></span>
+            </template>
+            <template slot="cell" scope="props">
+                <span v-html="'<b>'+props.data.key+'</b>'"></span>
+            </template>
+        </vp-grid> 
     </div>
 </template>
+<style>
+    .red{
+        background-color: red;
+        height: 200px;
+    }
+    .green{
+        background-color: green;
+        height: 200px;
+
+    }
+    .yellow{
+        background-color: yellow;
+         height: 200px;
+        
+
+    }
+</style>
 <script>
 import {
     Datagrid
@@ -28,15 +44,18 @@ export default {
                 head: {
                     select: {
                         type: 'checkbox',
-                        label: ''
+                        label: '',
+                        width:'100px'
                     },
                     select2: {
                         type: 'checkbox',
-                        label: ''
+                        label: '',
+                        width:'50px'
                     },
                     mobile: {
                         type: 'switch',
-                        label: '有手机'
+                        label: '有手机',
+                        width:'150px'
                     },
                     house: {
                         type: 'switch',
@@ -62,7 +81,10 @@ export default {
                     sUserMobile: '获奖联系方式',
                     sBeizhu: '备注',
                     sStatus: '状态',
-                    slot: 'slot'
+                    slot: {
+                        label:'slot',
+                        width:'90px'
+                    }
                 },
                 data: [{
                     select: {
@@ -86,16 +108,16 @@ export default {
                     sBeizhu: '备注',
                     slot: 'slot',
                     sStatus: '状态',
-                    option:[{
-                        type:'link',
-                        url:'http://www.baidu.com',
-                        text:'百度'
-                    },{
-                        type:'action',
-                        name:'new',
-                        text:'新增',
-                        arg:{
-                            id:123
+                    option: [{
+                        type: 'link',
+                        url: 'http://www.baidu.com',
+                        text: '百度'
+                    }, {
+                        type: 'action',
+                        name: 'new',
+                        text: '新增',
+                        arg: {
+                            id: 123
                         }
                     }]
                 }, {
@@ -196,7 +218,9 @@ export default {
                     slot: 'slot',
                     sStatus: '状态'
                 }],
-                colspan: 10
+                colspan: 10,
+                fixLeft:3,
+                fixRight:1
             }
         }
     },
@@ -213,8 +237,8 @@ export default {
         sort(key, isAsc) {
             console.log(key, isAsc);
         },
-        action(name,arg){
-            console.log(name,arg);
+        action(name, arg) {
+            console.log(name, arg);
         }
     }
 }

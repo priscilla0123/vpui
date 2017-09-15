@@ -1,46 +1,86 @@
 <template>
-    <div class="lg-table-scroll" oncontextmenu="return false">
-        <table class="lg-table" :style="scroll ? 'min-width:1200px' : ''">
-            <thead>
-                <tr>
-                    <th v-for="head in aHead">
-                        <slot name="header" :data="head">
-                            <span v-if="head.type == 'checkbox'" class="lg-checkbox">
-                                <input type="checkbox" :id="'grid_chb'+head.key" @click="checkAll(head.key)" :value="head.key" v-model="isAllCheck"/>
-                                <label class="test" v-html="head.label" :for="'grid_chb'+head.key">{{headerFormat(head)}}</label>
-                            </span>
-                            <span v-else-if="head.type == 'sort'" class="grid-sort" :class="{'up':head.asc===true,'down':head.asc===false}" @click="sort(head,head.asc)">{{headerFormat(head)}}</span>
-                            <span v-else>{{headerFormat(head)}}</span>
-                        </slot>
-                    </th>
-                </tr>
-            </thead>
-            <tbody v-if="aData.length>0">
-                <tr v-for="(item, index) in aData">
-                    <td v-for="head in aHead" class="nowrap">
-                        <slot name="cell" :title="item[head.key]" :data="{item: item, key: head.key}" @click="cellClick(item)">
-                            <span v-if="head.type == 'checkbox' && item[head.key] && !item[head.key].disable" class="lg-checkbox">
-                                <input type="checkbox" :value="item[head.key].value" :id="'grid_chb' + head.key + '_' + index" @click="check(head.key, index)" v-model="checkResults[head.key]"/>
-                                <label :for="'grid_chb' + head.key + '_' + index"></label>
-                            </span>
-                            <span v-else-if="head.type == 'switch' && item[head.key] != 'undefined' && !item[head.key].disable" class="lg-switch">
-                                <input type="checkbox"  :id="'grid_swh' + head.key + '_' + index" @click="switcher(head.key, index, item[head.key])" v-model="item[head.key]"/>
-                                <label :for="'grid_swh' + head.key + '_' + index">{{head.off || 'OFF'}}</label>
-                                <label :for="'grid_swh' + head.key + '_' + index">{{head.on || 'ON'}}</label>
-                            </span>
-                            <a v-else-if="head.type == 'option'" v-for="act in item[head.key]" :href="act.type == 'link' ? act.url : 'javascript:void(0)'" :target="act.blank?'_blank':''" @click="action(act.name,act.arg)">{{act.text}}</a>
-                            <span v-else>{{cellFormat(item, head.key)}}</span>
-                        </slot>
-                    </td>
-                </tr>
-            </tbody>
-            <tbody v-else>
-                <tr>
-                    <td :colspan="colspan">暂无数据</td>
-                </tr>
-            </tbody>
-        </table>
+    <div style="position:relative">
+        <div class="lg-table-scroll lg-table-main">
+            <table class="lg-table" :style="scroll ? 'min-width:1200px' : ''">
+                <thead>
+                    <tr>
+                        <th v-for="head in aHead" :style="'width:'+head.width">
+                            <slot name="header" :data="head">
+                                <span v-if="head.type == 'checkbox'" class="lg-checkbox">
+                                    <input type="checkbox" :id="'grid_chb'+head.key" @click="checkAll(head.key)" :value="head.key" v-model="isAllCheck"/>
+                                    <label class="test" v-html="head.label" :for="'grid_chb'+head.key">{{headerFormat(head)}}</label>
+                                </span>
+                                <span v-else-if="head.type == 'sort'" class="grid-sort" :class="{'up':head.asc===true,'down':head.asc===false}" @click="sort(head,head.asc)">{{headerFormat(head)}}</span>
+                                <span v-else>{{headerFormat(head)}}</span>
+                            </slot>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody v-if="aData.length>0">
+                    <tr v-for="(item, index) in aData">
+                        <td v-for="head in aHead" class="nowrap">
+                            <slot name="cell" :title="item[head.key]" :data="{item: item, key: head.key}" @click="cellClick(item)">
+                                <span v-if="head.type == 'checkbox' && item[head.key] && !item[head.key].disable" class="lg-checkbox">
+                                    <input type="checkbox" :value="item[head.key].value" :id="'grid_chb' + head.key + '_' + index" @click="check(head.key, index)" v-model="checkResults[head.key]"/>
+                                    <label :for="'grid_chb' + head.key + '_' + index"></label>
+                                </span>
+                                <span v-else-if="head.type == 'switch' && item[head.key] != 'undefined' && !item[head.key].disable" class="lg-switch">
+                                    <input type="checkbox"  :id="'grid_swh' + head.key + '_' + index" @click="switcher(head.key, index, item[head.key])" v-model="item[head.key]"/>
+                                    <label :for="'grid_swh' + head.key + '_' + index">{{head.off || 'OFF'}}</label>
+                                    <label :for="'grid_swh' + head.key + '_' + index">{{head.on || 'ON'}}</label>
+                                </span>
+                                <a v-else-if="head.type == 'option'" v-for="act in item[head.key]" :href="act.type == 'link' ? act.url : 'javascript:void(0)'" :target="act.blank?'_blank':''" @click="action(act.name,act.arg)">{{act.text}}</a>
+                                <span v-else>{{cellFormat(item, head.key)}}</span>
+                            </slot>
+                        </td>
+                    </tr>
+                </tbody>
+                <tbody v-else>
+                    <tr>
+                        <td :colspan="colspan">暂无数据</td>
+                    </tr>
+                </tbody>
+            </table> 
+        </div>
+        <div class="lg-table-scroll lg-table-fixleft" style="position:absolute;top:0"> 
+            <table class="lg-table">
+                <thead>
+                    <tr>
+                        <th v-for="(head,i) in aHead" v-if="i<2" style="width:80px">
+                            <slot name="header" :data="head">
+                                <span v-if="head.type == 'checkbox'" class="lg-checkbox">
+                                    <input type="checkbox" :id="'grid_chb'+head.key" @click="checkAll(head.key)" :value="head.key" v-model="isAllCheck"/>
+                                    <label class="test" v-html="head.label" :for="'grid_chb'+head.key">{{headerFormat(head)}}</label>
+                                </span>
+                                <span v-else-if="head.type == 'sort'" class="grid-sort" :class="{'up':head.asc===true,'down':head.asc===false}" @click="sort(head,head.asc)">{{headerFormat(head)}}</span>
+                                <span v-else>{{headerFormat(head)}}</span>
+                            </slot>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody v-if="aData.length>0">
+                    <tr v-for="(item, index) in aData">
+                        <td v-for="(head,i) in aHead" class="nowrap" v-if="i<2">
+                            <slot name="cell" :title="item[head.key]" :data="{item: item, key: head.key}" @click="cellClick(item)">
+                                <span v-if="head.type == 'checkbox' && item[head.key] && !item[head.key].disable" class="lg-checkbox">
+                                    <input type="checkbox" :value="item[head.key].value" :id="'grid_chb' + head.key + '_' + index" @click="check(head.key, index)" v-model="checkResults[head.key]"/>
+                                    <label :for="'grid_chb' + head.key + '_' + index"></label>
+                                </span>
+                                <span v-else-if="head.type == 'switch' && item[head.key] != 'undefined' && !item[head.key].disable" class="lg-switch">
+                                    <input type="checkbox"  :id="'grid_swh' + head.key + '_' + index" @click="switcher(head.key, index, item[head.key])" v-model="item[head.key]"/>
+                                    <label :for="'grid_swh' + head.key + '_' + index">{{head.off || 'OFF'}}</label>
+                                    <label :for="'grid_swh' + head.key + '_' + index">{{head.on || 'ON'}}</label>
+                                </span>
+                                <a v-else-if="head.type == 'option'" v-for="act in item[head.key]" :href="act.type == 'link' ? act.url : 'javascript:void(0)'" :target="act.blank?'_blank':''" @click="action(act.name,act.arg)">{{act.text}}</a>
+                                <span v-else>{{cellFormat(item, head.key)}}</span>
+                            </slot>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
+    
 </template>
 <style>
 .lg-table thead label {
