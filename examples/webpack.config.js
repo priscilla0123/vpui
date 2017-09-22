@@ -60,6 +60,10 @@ module.exports = {
             from: './src/iconfont.*',
             to: '../_build_/',
             flatten:true
+        },{
+            from: './src/*.css',
+            to: '../_build_/',
+            flatten:true
         }]),
         new webpack.optimize.CommonsChunkPlugin({
             name: ['vpui', 'lib'],

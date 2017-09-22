@@ -1,8 +1,5 @@
 <template>
     <div>
-        <span class="lg-title">CheckBox & Radio & Switch： 常用选择操作</span>
-        <vp-grid :head="table_check.col" :data="table.data" :colspan="table_check.colspan"></vp-grid>  
-
         <span class="lg-title">Base： 最简单的表格</span>
         <vp-grid :head="table_base.col" :data="table.data" :colspan="table_base.colspan"></vp-grid>
 
@@ -12,12 +9,20 @@
         <span class="lg-title">Dynamic Slot：自定义单元格</span>
         <vp-grid :head="table_base.col" :data="table.data" :colspan="table_base.colspan">
             <div style="background-color:lightblue" :slot="'cell:sName_'+i" v-if="i%2" v-for="(item,i) in table.data" v-html="'<a><b>'+item.sName+'</b></a>'"></div>
+            <div class="lg-color-plain-bg" slot="col:sName" v-if="key == 'sName'" v-for="(item,key) in table_base.col" v-html="'<a><b>' + table_base.col[key] + '</b></a>'"></div>
         </vp-grid>        
 
-        <span class="lg-title">Action</span>
-        <vp-grid :head="table.head" :data="table.data" :colspan="table.colspan" @grid:checkbox="click" @grid:checkall="checkall" @grid:switch="switcher" @grid:sort="sort" @grid:action="action" :fix="table.fix">
+        <span class="lg-title">CheckBox & Radio & Switch & Sort： 常用操作</span>
+        <vp-grid :head="table_check.col" :data="table.data" :colspan="table_check.colspan" @check="check" @checkall="checkall" @radio="radio" @switch="switcher" @sort="sort"></vp-grid>
+
+        <span class="lg-title">Fix：表头固定</span>
+        <vp-grid :head="table.head" :data="table.data" :colspan="table.colspan" @check="check" @checkall="checkall" @switch="switcher" :fix="table.fix">
         </vp-grid>
 
+        <span class="lg-title">Expand： 扩展行</span>
+        <vp-grid :head="table_base.col" :data="table.data" :colspan="table_base.colspan" :expand="true">
+            <vp-grid slot="trexpand:0" :head="table_base.col" :data="table.data" :colspan="table_base.colspan"></vp-grid>
+        </vp-grid>
 
         <!-- <vp-grid :head="table.head" :data="table.data" :colspan="table.colspan" @grid:checkbox="click" @grid:checkall="checkall" @grid:switch="switcher" @grid:sort="sort">
             <template slot="header" scope="props">
@@ -110,11 +115,28 @@ export default {
             },
             table_check: {
                 col: {
-                    select:{
-                        type:'checkbox'
+                    select: {
+                        type: 'checkbox'
                     },
-                    
-                    sName: '姓名',
+                    radio: {
+                        type: 'radio',
+                        label: 'radio'
+                    },
+                    switch1:{
+                        type:'switch',
+                        label:'switch'
+                    },
+                    switch2:{
+                        type:'switch',
+                        label:'开关',
+                        on:'开',
+                        off:'关'
+                    },
+                    sName: {
+                        type:'sort',
+                        label:'姓名',
+                        klass:'qw'
+                    },
                     sType: '类型',
                     sUserMobile: '获奖联系方式',
                     sPrizeName: '奖品'
@@ -199,14 +221,15 @@ export default {
                 data: [{
                     select: {
                         value: 1,
+                        disable:true
+                    },
+                    radio:{
+                        value:'r1'
+                    },
+                    switch1: { 
                         checked: false
                     },
-                    switch1: {
-                        value: 1,
-                        checked: false
-                    },
-                    switch2: {
-                        value: 1,
+                    switch2: { 
                         checked: false
                     },
                     mobile: true,
@@ -222,6 +245,7 @@ export default {
                     sBeizhu: '备注',
                     slot: 'slot',
                     sStatus: '状态',
+                    $expand:'qqq',
                     option: [{
                         type: 'link',
                         url: 'http://www.baidu.com',
@@ -236,15 +260,16 @@ export default {
                     }]
                 }, {
                     select: {
-                        value: 10,
-                        checked: true
+                        value: 10
                     },
-                    switch1: {
-                        value: 1,
+                    radio:{
+                        value:'r2',
+                        disable:true
+                    },
+                    switch1: { 
                         checked: false
                     },
-                    switch2: {
-                        value: 1,
+                    switch2: { 
                         checked: false
                     },
                     mobile: {
@@ -265,16 +290,16 @@ export default {
                     sStatus: '状态'
                 }, {
                     select: {
-                        value: 2,
-                        checked: false,
-                        disable: true
+                        value: 2
+                    },                    
+                    radio:{
+                        value:'r3'
                     },
-                    switch1: {
-                        value: 1,
-                        checked: false
+                    switch1: { 
+                        disable:true,
+                        label:'禁用'
                     },
-                    switch2: {
-                        value: 1,
+                    switch2: { 
                         checked: false
                     },
                     mobile: {
@@ -295,9 +320,10 @@ export default {
                     sStatus: '状态'
                 }, {
                     select: {
-                        value: 3,
-                        checked: false,
-                        disable: true
+                        value: 3
+                    },
+                    radio:{
+                        value:'r4'
                     },
                     switch1: {
                         value: 1,
@@ -323,16 +349,19 @@ export default {
                 }, {
                     select: {
                         value: 4,
-                        checked: false,
-                        disable: true
+                        checked: true
+                    },                    
+                    radio:{
+                        value:'r5',
+                        checked:true
                     },
                     switch1: {
                         value: 1,
-                        checked: false
+                        checked: true
                     },
                     switch2: {
                         value: 1,
-                        checked: false
+                        checked: true
                     },
                     mobile: true,
                     house: true,
@@ -357,27 +386,37 @@ export default {
             }
         }
     },
+    created(){
+        this.table.data.forEach(function(data){
+            data.$expand=function(){
+                return 'I am expanded';
+            }
+        })
+    },
     methods: {
-        click(key, index, result) {
-            console.log(key, index, result);
+        check(key, index, result) {             
+            console.log('checkbox', key, index, result);
         },
         checkall(key, result) {
-            console.log(key, result);
+            console.log('checkall', key, result);
+        },
+        radio(key, index, result){
+            console.log('radio', key, index, result);
         },
         switcher(key, index, result) {
-            console.log(key, index, result);
+            console.log('switch',key, index, result);
         },
         sort(key, isAsc) {
-            console.log(key, isAsc);
+            console.log('sort',key, isAsc);
         },
         action(name, arg) {
             console.log(name, arg);
         },
-        userdefine(data){ 
-            alert('just do it !(id:'+data.id+')');
-            console.log(data); 
+        userdefine(data) {
+            alert('just do it !(id:' + data.id + ')');
+            console.log(data);
         },
-        test(data){
+        test(data) {
             console.log(data);
         }
     }

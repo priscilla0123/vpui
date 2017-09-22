@@ -1,19 +1,21 @@
 <template>
     <div style="position:relative">
-        <div class="lg-table-scroll lg-table-main">
-            <basegrid :column="aHead" :data="data" :colspan="colspan" style="min-width:1200px" ref="main" @action="onAction"> 
-                <template v-for="(col,i) in aHead">
-                    <div :slot="'cell:'+col.key+'_'+j" v-for="(item,j) in data" v-if="$slots['cell:'+col.key+'_'+j]">
-                        <slot :name="'cell:'+col.key+'_'+j">123</slot> 
+        <div v-for="table in tables" class="lg-table-scroll" :class="table.klass">
+            <basegrid :column="getHead(column, table.ref, fix)" :data="data" :colspan="colspan" :expand="expand" :style="table.style" :ref="table.ref" @action="onAction" @check="onCheck" @checkall="onCheckAll" @radio="onRadio" @switch="onSwitch" @sort="onSort">
+                <template v-for="col in column">
+                    <div :slot="colname(col)" v-if="$slots[colname(col)]">
+                        <slot :name="colname(col)"></slot>
                     </div>
-                </template>                
+                    <div :slot="cellname(col, i)" v-for="(item, i) in data" v-if="$slots[cellname(col, i)]">
+                        <slot :name="cellname(col, i)"></slot>
+                    </div>
+                </template>
+                <template v-for="(item, i) in data">
+                    <div :slot="trname(i)" v-if="$slots[trname(i)]">
+                        <slot :name="trname(i)"></slot>
+                    </div>
+                </template>
             </basegrid>
-        </div>
-        <div class="lg-table-scroll lg-table-fixleft" v-if="fix.left">
-            <basegrid :column="getFixHead(aHead,fix.left)" :data="data" :colspan="colspan" ref="left"></basegrid>
-        </div>
-        <div class="lg-table-scroll lg-table-fixright" v-if="fix.right">
-            <basegrid :column="getFixHead(aHead,fix.right,true)" :data="data" :colspan="colspan" ref="right"></basegrid>
         </div>
     </div>
 </template>
@@ -33,15 +35,6 @@ var Datagrid = {
         'colspan': {
             type: Number,
             require: true
-        },
-        'parent': {
-            type: Object,
-            require: false
-        },
-        'scroll': {
-            type: Boolean,
-            require: false,
-            default: true
         },
         'headerFormat': {
             type: Function,
@@ -69,36 +62,35 @@ var Datagrid = {
             default () {
                 return {};
             }
+        },
+        'expand': {
+            type: Boolean,
+            require: false,
+            default: false
         }
     },
     data: function() {
-        var parent = this.parent || this.$parent;
-        var checkResults = {};
-        var isAllCheck = [];
-        var _this = this;
-        for (var key in this.head) {
-            var type = this.head[key].type;
-            if (type == 'checkbox' || type == 'radio') {
-                checkResults[key] = [];
-                var count = 0;
-                _this.data.forEach(function(line, i) {
-                    line[key] && line[key].checked && checkResults[key].push(line[key].value);
-                    (line[key].checked || line[key].disable) && (count++);
-                })
-                _this.data.length && _this.data.length == count && isAllCheck.pus(key);
-            }
-        }
+        var tables = [{
+            klass: 'lg-table-main',
+            style: 'min-width:1200px',
+            ref: 'main'
+        }];
+        this.fix.right && tables.push({
+            klass: 'lg-table-fixright',
+            style: '',
+            ref: 'right'
+        })
+        this.fix.left && tables.push({
+            klass: 'lg-table-fixleft',
+            style: '',
+            ref: 'left'
+        })
         return {
-            p: parent,
-            checkResults: checkResults,
-            isAllCheck: isAllCheck
-        }
+            tables: tables
+        };
     },
     computed: {
-        aData() {
-            return this.data;
-        },
-        aHead() {
+        column() {
             var header = [];
             for (var key in this.head) {
                 if (typeof this.head[key] == 'object') {
@@ -116,79 +108,66 @@ var Datagrid = {
             return header;
         }
     },
-    mounted() { 
-        //synchronous row height of main & left & right if (left,right) exist
+    mounted() {
+        //synchronous row height of main if (left,right) exist
         if (this.fix.left || this.fix.right) {
             this.setRowHeight();
             var that = this;
             window.onresize = () => {
                 that.setRowHeight();
             }
-        } 
+        }
     },
-    methods: { 
-        cellClick(data) {
-            this.$emit('grid:click', data);
-        },
-        checkAll(key) {
-            var _this = this;
-            var disableLength = this.aData.filter(function(item, i) {
-                return item[key].disable;
-            }).length;
-            var length = this.checkResults[key].length + disableLength;
-            this.checkResults[key] = [];
-            if (length != this.aData.length) {
-                this.aData.forEach(function(line) {
-                    !line[key].disable && _this.checkResults[key].push(line[key].value);
-                })
-            } else {}
-            this.$emit('grid:checkall', key, this.checkResults[key].join(','));
-            this.computeCheckAll(key);
-        },
-        computeCheckAll(key) {
-            var disableLength = this.aData.filter(function(item, i) {
-                return item[key].disable;
-            }).length;
-            var length = this.checkResults[key].length + disableLength;
-            var index = this.isAllCheck.indexOf(key);
-            if (length != this.aData.length) {
-                index > -1 && this.isAllCheck.splice(index, 1);
-            } else {
-                this.isAllCheck.push(key);
+    methods: {
+        getHead(heads, type, fix) {
+            if (type == 'right') {
+                return this.getFixHead(heads, fix.right, true);
+            } else if (type == 'left') {
+                return this.getFixHead(heads, fix.left);
             }
-        },
-        check(key, index) {
-            this.$emit('grid:checkbox', key, index, this.checkResults[key].join(','));
-            this.computeCheckAll(key);
-        },
-        switcher(key, index, reuslt) {
-            this.$emit('grid:switch', key, index, reuslt);
-        },
-        sort(head, asc) {
-            var next = asc === true ? false : (asc === false ? '' : true);
-            head.asc = next;
-            this.$emit('grid:sort', head.key, next);
-        },
-        action(name, arg) {
-            this.$emit('grid:action', name, arg)
+            return heads;
         },
         getFixHead(heads, length, reverse) {
             return reverse ? heads.slice(heads.length - length) : heads.slice(0, length);
         },
         setRowHeight() {
-            var mainHeight = this.$refs.main.getRowHeight();
-            var leftHeight = this.fix.left ? this.$refs.left.getRowHeight() : mainHeight;
-            var rightHeight = this.fix.right ? this.$refs.right.getRowHeight() : mainHeight;
+            var mainHeight = this.$refs.main[0].getRowHeight();
+            var leftHeight = this.fix.left ? this.$refs.left[0].getRowHeight() : mainHeight;
+            var rightHeight = this.fix.right ? this.$refs.right[0].getRowHeight() : mainHeight;
             mainHeight.forEach(function(h, i) {
                 var temp = [h, leftHeight[i], rightHeight[i]];
                 h = temp.sort()[2];
             })
-            this.$refs.main.setRowHeight(mainHeight);
-            this.$refs.left && this.$refs.left.setRowHeight(mainHeight);
-            this.$refs.right && this.$refs.right.setRowHeight(mainHeight);
+            this.$refs.main[0].setRowHeight(mainHeight);
+            this.$refs.left && this.$refs.left[0].setRowHeight(mainHeight);
+            this.$refs.right && this.$refs.right[0].setRowHeight(mainHeight);
         },
-        onAction(actionName, data) { 
-            this.$emit('callback:'+actionName,data);
+        onCheck(key, index, result) {
+            this.$emit('check', key, index, result);
+        },
+        onCheckAll(key, result) {
+            this.$emit('checkall', key, result);
+        },
+        onRadio(key, index, result) {
+            this.$emit('radio', key, index, result);
+        },
+        onSwitch(key, index, checked) {
+            this.$emit('switch', key, index, checked);
+        },
+        onSort(key, sortStatus) {
+            this.$emit('sort', key, sortStatus);
+        },
+        onAction(actionName, data) {
+            this.$emit('callback:' + actionName, data);
+        },
+        colname(col) {
+            return 'col:' + col.key;
+        },
+        cellname(col, index) {
+            return 'cell:' + col.key + '_' + index;
+        },
+        trname(index) {
+            return 'trexpand:' + index;
         }
     },
     components: {
@@ -282,5 +261,12 @@ export default Datagrid;
 
 .lg-table a {
     margin-right: 5px;
+}
+
+.lg-table .lg-ihollowadd,
+.lg-table .lg-ihollowminus {
+    line-height: 16px;
+    font-size: 20px;
+    cursor: pointer;
 }
 </style>
