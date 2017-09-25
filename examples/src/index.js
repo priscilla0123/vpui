@@ -9,11 +9,13 @@ import Checkbox from './components/checkbox.vue';
 import Radio from './components/radio.vue';
 import OverlayView from './views/overlay.vue'; 
 import Tab from './components/tab.vue';
+import Select from './components/select.vue';
 import CityPicker from './views/citypicker.vue';
 
 import Tablepager from './modules/tablepager.vue';
 
 import Valid from './directives/valid.vue';
+import Clickoutside from './directives/clickoutside.vue';
 
 const router = new VueRouter({
     //COMPONENTS
@@ -38,7 +40,10 @@ const router = new VueRouter({
     }, {
         path: '/components/tab',
         component: Tab
-    }, {
+    },{
+        path: '/components/select',
+        component: Select
+    },{
         //MODULES
         path: '/modules/tablepager',
         component: Tablepager
@@ -46,6 +51,10 @@ const router = new VueRouter({
         //DIRECTIVES
         path: '/directives/valid',
         component: Valid
+    },{
+        //DIRECTIVES
+        path:'/directives/clickoutside',
+        component: Clickoutside
     }]
 });
 
@@ -75,6 +84,9 @@ new Vue({
                 text: 'Tab',
                 url: '#/components/tab'
             }, {
+                text: 'Select',
+                url: '#/components/select'
+            }, {
                 text: 'CityPicker',
                 url: '#/components/citypicker'
             }],
@@ -87,6 +99,9 @@ new Vue({
                 text: 'Valid',
                 url: '#/directives/valid',
                 id: 'dir_1'
+            }, {
+                text: 'Clickoutside',
+                url: '#/directives/clickoutside'
             }],
             active: 'com_1'
         }
