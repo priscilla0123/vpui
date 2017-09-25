@@ -1,5 +1,5 @@
 <template>
-    <div> 
+    <div>
 
         <div style="padding-top:50px; margin-bottom: 70px; color: #333">
             Overlay
@@ -16,7 +16,11 @@
                 
                 <btn size="small" type="danger" @click="showAlertConfirm()" >confirm</btn>
                 <btn size="small" type="danger" @click="showAlertConfirmDefault()" >defaultconfirm </btn>
+                <btn size="small" type="danger" @click="showLoading(true)" >loading </btn>
+                <btn size="small" type="danger" @click="showLoading(false)" >loading </btn>
+                
                 <btn size="small" type="danger" @click="test()" >overManager </btn>
+
             </div>
             <div style="width: 200px;height: 200px; border: 1px #ccc solid;position: relative;">
                 <vp-mask ref="innerMask" @click="closeMask($refs.innerMask)" style="position:absolute" :visibility="false"></vp-mask>
@@ -111,16 +115,17 @@
                     </vp-picker>
                 </div>
             </div>
-        </div> 
+        </div>
     </div>
 </template>
 <script>
-    import { Button } from 'vpui'; 
+    import { Button } from 'vpui';
     import { Mask } from 'vpui';
     import { Alert } from 'vpui';
     import { AutoPosition } from 'vpui';
     import { Picker } from 'vpui';
     import { Overlay} from 'vpui';
+    import { Toast } from 'vpui';
 
     export default {
         components: {
@@ -191,11 +196,16 @@
                 }
 
                 Alert(centent.join(' '));
-            } 
+            },
+
+            showLoading(mask){
+                Toast.loading('test',mask);
+            }
         }
     }
 </script>
-<style> 
+<style>
+
     .buttons{
         padding: 10px 0 10px 0px;
     }
@@ -231,5 +241,5 @@
 
     .custom-picker .vp-picker-overlay{
         width: auto;
-    } 
+    }
 </style>
