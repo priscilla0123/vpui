@@ -12,16 +12,21 @@ import Tab from './components/tab.vue';
 import Pager from './components/pager.vue';
 
 import Datagrid from './components/datagrid.vue';
+import Timeline from './components/timeline.vue';
 
 import OverlayView from './components/overlay.vue';
+import WaterFall from './components/waterfall.vue';
 
 import CityPicker from './components/citypicker.vue';
 import DatePicker from './components/datepicker.vue';
+import Uploader from './components/uploader.vue';
+import ProgressBar from './components/progressbar.vue';
 
 import Tablepager from './modules/tablepager.vue';
 
 import Valid from './directives/valid.vue';
 import Clickoutside from './directives/clickoutside.vue';
+
 
 // COMPONENTS
 const com = [
@@ -37,6 +42,7 @@ const com = [
 
     // data
     { path: '/components/datagrid', component: Datagrid, text: 'Datagrid' },
+    { path: '/components/timeline', component: Timeline, text: 'Timeline' },
 
     // overlays
     { path: '/components/overlay', component: OverlayView, text: 'OverlayView' },
@@ -44,6 +50,10 @@ const com = [
     // pickers
     { path: '/components/citypicker', component: CityPicker, text: 'CityPicker' },
     { path: '/components/datepicker', component: DatePicker, text: 'DatePicker' },
+    { path: '/components/waterfall', component: WaterFall, text: 'WaterFall' },
+    { path: '/components/uploader', component: Uploader, text: 'Uploader' },
+    { path: '/components/progressbar', component: ProgressBar, text: 'ProgressBar' }
+       
 ]
 
 // MODULES
@@ -60,6 +70,14 @@ const dir = [
 const router = new VueRouter({
     routes: [...com, ...mod, ...dir].map(({ path, component }) => ({ path, component }))
 })
+
+router.afterEach( (route) => {
+    //console.log(route);
+    let paths = route.path.split('/');
+    let text = paths.pop();
+    document.getElementById('J-page-title-text').innerHTML = text;
+});
+
 
 new Vue({
     el: '#app',

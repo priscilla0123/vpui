@@ -6,11 +6,13 @@ import Mask from './components/mask';
 import Alert from './components/alert';
 import Picker from './components/picker';
 import CityPicker from './components/citypicker';
-import { Datepanel, Datepicker } from './components/datepicker';
+import { Timepanel, Datepanel, Datepicker } from './components/datepicker';
 import Checkbox from './components/checkbox';
 import Radio from './components/radio';
 import { Tabs, Tab } from './components/tab';
 import Select from './components/select';
+import { WaterFall, WaterFallItem} from './components/waterfall';
+import Timeline from './components/timeline';
 //--------------------------------------------------------
 import Tablepager from './modules/tablepager';
 //--------------------------------------------------------
@@ -18,11 +20,13 @@ import Valid from './directives/valid';
 import AutoPosition from './directives/autoposition';
 import Clickoutside from './directives/clickoutside';
 import Toast from './components/toast';
+import Uploader from './components/uploader';
+import ProgressBar from './components/progressbar';
 //--------------------------------------------------------
 import Vue from 'vue';
 
 var Components = [
-    Pager, Datagrid, Checkbox, Radio, Tabs, Tab, Select, Datepanel, Datepicker
+    Pager, Datagrid, Checkbox, Radio, Tabs, Tab, Select, Timepanel, Datepanel, Datepicker,WaterFall,Uploader,ProgressBar,Timeline
 ];
 
 var Modules = [
@@ -64,9 +68,15 @@ export {
     Select,
     Picker,
     CityPicker,
+    Timepanel,
     Datepanel,
     Datepicker,
-    Toast
+    Toast,
+    WaterFall,
+    Uploader,
+    ProgressBar,
+    WaterFallItem,
+    Timeline
 };
 
 export default {install};

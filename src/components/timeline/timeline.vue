@@ -1,286 +1,283 @@
 <template>
-    <div class="lg-pager" :class="klass" v-if="showPager">        
-        <ul>                    
-            <li class="lg-pager-item lg-pager-previous" :class="{'disable': isHead}">
-                <a href="javascript:" @click="to(pager.current-1)"></a>
-            </li>
-            <li class="lg-pager-item" :class="{'lg-pager-current': isHead}">
-                <a href="javascript:" @click="to(1)">1</a>
-            </li>
-            <li class="lg-pager-item lg-pager-dot" v-if="pager.start != 2">
-                ...
-            </li>
-            <li class="lg-pager-item" v-for="n in (pager.end-pager.start + 1)" :class="{'lg-pager-current': pager.current == (pager.start + n - 1)}">
-                <a href="javascript:" @click="to(pager.start + n - 1)">{{pager.start + n - 1}}</a>
-            </li>
-            <li class="lg-pager-item lg-pager-dot" v-if="pager.end < pager.total - 1">
-                ...
-            </li>
-            <li class="lg-pager-item" :class="{'lg-pager-current': isTail}" v-if="pager.total > 1">
-                <a href="javascript:" @click="to(pager.total)">{{pager.total}}</a>
-            </li>
-            <li class="lg-pager-item lg-pager-next" :class="{'disable': isTail}">
-                <a href="javascript:" @click="to(pager.current + 1)"></a>
-            </li>
-            <li class="lg-pager-shortcut">
-                去第<input type="text" v-model="shortcut">页<a href="javascript:" class="lg-pager-shortcut-confirm" @click="to(shortcut)">确定</a>
-            </li>
-            <li slot="before" v-if="$slots.before">
-                <slot name="before"></slot> 
-            </li>
-            <li class="lg-pager-total">共{{pager.total}}页</li>
-            <li slot="after" v-if="$slots.after">
-                <slot name="after"></slot> 
-            </li>             
-        </ul>         
+    <div class="vp-tl-line" :class="lineClass">
+        <div class="vp-tl-item" v-for="(n,i) in aNode" :class="nodeClass[i]">
+            <div class="vp-tl-point" @click="onClick(i)">
+                <slot :name="'icon'+i">
+                    <div class="vp-tl-dot">{{n.dotIndex}}</div>
+                </slot>
+            </div>
+            <div class="vp-tl-label">
+                <div class="vp-tl-title" @click="onClick(i)">{{n.title}}</div>
+                <slot :name="'remark'+i">
+                    <div class="vp-tl-remark" v-html="n.remark"></div>
+                </slot>
+            </div>
+        </div>
     </div>
 </template>
 <style>
-.lg-pager {
-    margin: 5px auto;
-    font: 12px Tahoma, Helvetica Neue, Hiragino Sans GB, Microsoft Yahei, sans-serif;
-    overflow: hidden;
-    height: 50px;
-    text-align: center;
+.vp-tl-line .vp-tl-item {
+    position: relative;
+    align-items: stretch;
 }
 
-.lg-pager-left {
+.vp-tl-item.vp-tl-right:before,
+.vp-tl-item.vp-tl-left:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -50%;
+    left: 50%;
+    margin-top: -1px;
+    margin-left: 4px;
+    margin-right: 49px;
+    border-bottom: 2px dashed rgba(0, 0, 0, 0.43);
+}
+
+.vp-tl-item.vp-tl-down:before,
+.vp-tl-item.vp-tl-up:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 50%;
+    margin-top: 4px;
+    margin-left: -1px;
+    border-left: 2px dashed #108ee9;
+}
+
+.vp-tl-item.vp-tl-active:before {
+    background-color: #108ee9;
+    border-bottom: 2px dashed #108ee9;
+}
+
+.vp-tl-item.vp-tl-cur.vp-tl-left:before,
+.vp-tl-line .vp-tl-item.vp-tl-cur.vp-tl-up:before {
+    background-color: #108ee9;
+}
+
+.vp-tl-item.vp-tl-cur:before {
+    background-color: transparent;
+    border-bottom: 2px dashed rgba(0, 0, 0, 0.43);
+}
+
+.vp-tl-item.vp-tl-last:before {
+    display: none;
+}
+
+.vp-tl-point {
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -35px;
+    margin-top: -13px;
+    z-index: 1;
+    cursor: pointer;
+}
+
+.vp-tl-line-small .vp-tl-point {
+    transform: scale(0.7, 0.7);
+    margin-left: -42px;
+}
+
+.vp-tl-dot {
+    border: 1px solid rgba(0, 0, 0, 0.43);
+    border-radius: 13px;
+    background-color: white;
+    height: 100%;
+    text-align: center;
+    line-height: 24px;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.43);
+}
+
+.vp-tl-item.vp-tl-active .vp-tl-point .vp-tl-dot {
+    border: 1px solid #108ee9;
+    color: #108ee9;
+}
+
+.vp-tl-item.vp-tl-cur .vp-tl-point .vp-tl-dot {
+    background-color: #108ee9;
+    color: white;
+}
+.vp-tl-line-small .vp-tl-dot{
+    font-size: 14px;
+}
+
+
+.vp-tl-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -15px;
+    line-height: 30px;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.43);
+    font-weight: bold;
+    word-wrap: break-word;
+}
+
+.vp-tl-line-small .vp-tl-label {
+    margin-left: -14px;
+}
+
+.vp-tl-item.vp-tl-down .vp-tl-label,
+.vp-tl-item.vp-tl-up .vp-tl-label {
+    position: relative;
+    top: 0;
+    left: 50%;
+    padding-top: 0;
+    padding-left: 20px;
+    align-self: center;
     text-align: left;
 }
 
-.lg-pager-right {
-    text-align: right;
+.vp-tl-title {
+    cursor: pointer;
+    display: inline;
+    padding-right: 12px;
+    background-color: white;
 }
 
-.lg-pager ul {
-    display: inline-block;
-}
-
-.lg-pager li {
-    float: left;
-    list-style: none;
-    margin: 2px 3px;
-    line-height: 28px;
+.vp-tl-remark {
     font-size: 12px;
-    height: 28px;
+    color: rgba(0, 0, 0, 0.23);
+    line-height: 16px;
+    width: 120px;
 }
 
-.lg-pager-item {
-    border: 1px solid #dfdfdf;
-    border-radius: 2px;
-    background-color: #fff;
+.vp-tl-horizon {
+    display: flex;
+    height: 100px;
 }
 
-.lg-pager-item:hover {
-    border-color: #5986E1;
-}
-
-.lg-pager-item.disable a {
-    color: #a3a3a3;
-}
-
-.lg-pager-item.disable a:after,
-.lg-pager-item.disable a:before {
-    color: #a3a3a3;
-    border-left-color: #a3a3a3;
-}
-
-.lg-pager-item.disable:hover {
-    border-color: #dfdfdf;
-}
-
-.lg-pager-item a {
-    display: inline-block;
-    text-align: center;
-    color: #666;
-    height: 28px;
-    min-width: 28px;
-    line-height: 28px;
-    padding: 0 5px;
-    text-decoration: none;
-}
-
-.lg-pager-total {
-    border: 1px solid transparent;
-}
-
-.lg-pager-current {
-    background: #5986E1;
-    border-color: #5986E1;
-}
-
-.lg-pager-current a {
-    color: #fff;
-}
-
-.lg-pager-item-large a {
-    padding: 0px 4px;
-}
-
-.lg-pager-previous a:before {
-    content: '';
-    display: inline-block;
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-    border-left: 7px solid #666;
-    border-right: none;
-    -webkit-transform: rotateZ(180deg);
-    -moz-transform: rotateZ(180deg);
-    -o-transform: rotateZ(180deg);
-    -ms-transform: rotateZ(180deg);
-    transform: rotateZ(180deg);
-}
-
-.lg-pager-next a:after {
-    content: '';
-    display: inline-block;
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-    border-left: 7px solid #666;
-    border-right: none;
-}
-
-.lg-pager-current a,
-.lg-pager-point a {
-    currentsor: default;
-}
-
-.lg-pager-shortcut {
-    height: 24px;
-    color: #a3a3a3;
-    border: 1px solid transparent;
-}
-
-.lg-pager-shortcut input {
-    height: 24px;
-    width: 38px;
-    padding: 0px;
-    outline: none;
-    text-align: center;
-    margin: 0 6px;
-    border-radius: 3px;
-    border: 1px solid #a3a3a3;
-    box-size: border-box;
-}
-
-.lg-pager-shortcut-confirm {
-    border-radius: 3px;
-    background: #5986E1;
-    text-decoration: none;
-    text-align: center;
-    display: inline-block;
-    color: #fff;
-    width: 50px;
-    height: 24px;
-    line-height: 24px;
-    margin: 0 5px;
-}
-
-.lg-pager-dot {
-    border: none;
+.vp-tl-horizon .vp-tl-item {
+    flex: 1;
 }
 </style>
 <script>
-var Pager = {
-    name: 'pager',
+var nodeStatus = {
+    'FINISHED': 0,
+    'CURRENT': 1,
+    'TODO': 2
+}
+var Timeline = {
+    name: 'timeline',
     props: {
-        'total': {
-            type: Number,
+        'node': {
+            type: Array,
             require: true
         },
         'current': {
             type: Number,
-            require: true,
-            default: 1
+            require: false,
+            default: 0
         },
-        'position': {
-            type: String
+        'width': {
+            require: false,
+            default: 'flex' //flex,auto,...px
         },
-        'volumn': {
-            type: Number,
-            default: 10,
-            validator(value) {
-                return value > 5;
-            }
-        }
-    },
-    methods: {
-        to(current) {
-            var cur = Math.floor(Number(current));
-            if (isNaN(cur)) {
-                alert('别任性~');
-                return;
-            }
-            if (cur <= this.pager.total && cur >= 1 && cur != this.pager.current) {
-                this.calculate(cur);
-                this.$emit('to', cur);
-            }
+        'direction': {
+            type: String,
+            require: false,
+            default: 'right'
         },
-        calculate(current) {
-            var current = Math.floor(current / 1);
-            var start = 2,
-                end = this.pager.total - 1;
-            if (this.pager.total > this.vol) {
-                if (current - this.pre > 1) {
-                    start = current - this.pre;
-                    if (current + this.next - this.pager.total < 0) {
-                        end = current + this.next
-                    } else {
-                        start = end - (this.vol - 3);
-                    }
-                } else {
-                    end = start + this.vol - 3;
-                }
-            } else if (start > end) {
-                end = 1;
-            }
-            this.pager.start = start;
-            this.pager.end = end;
-            this.pager.current = current;
+        'type': {
+            type: String,
+            require: false,
+            default: 'dot'
         },
-        update() {
-            this.vol = this.volumn;
-            this.pre = Math.floor((this.vol - 3) / 2);
-            this.next = Math.ceil((this.vol - 3) / 2);
-            this.pager.total = this.total; 
-            this.calculate(this.current);
+        size: {
+            type: String,
+            require: false,
+            default: null
         }
     },
     data() {
-        return {
-            pager: {
-                total: this.total,
-                current: this.current
-            },
-            klass: {
-                'lg-pager-left': this.position == 'left',
-                'lg-pager-right': this.position == 'right'
-            },
-            shortcut:''
+        var data = {
+            klass: '',
+            style: ''
         }
-    },
-    created() {
-        this.update();
+
+        // if (opt.width) {
+        //     data.style = 'width:' + opt.width + ';';
+        // }
+        // if (opt.height) {
+        //     data.style += 'height:' + opt.height + ';';
+        // }
+
+        // if ((dir == 'up' || dir == 'down') && opt.autoHeight) { //vertical line can set self-adapting height
+        //     data.style = "height:auto;padding:15px 0;";
+        // } else if (opt.autoWidth) { //horizontal line can set self-adapting width
+        //     data.style = "width:auto;padding:0 15px;";
+        // }
+
+        return data;
     },
     computed: {
-        isHead() {
-            return this.pager.current == 1;
+        cur() {
+            return this.current || 0;
         },
-        isTail() {
-            return this.pager.current == this.pager.total;
+        aNode() {
+            //if reverse
+            //:todo
+            var _this = this;
+            var aNode = [];
+
+            this.node.forEach(function(node, i) {
+                if (typeof node != 'object') {
+                    node = {
+                        title: node
+                    }
+                }
+                node.status = _this.getStatus(i, _this.cur);
+                _this.type == 'number' && (node.dotIndex = i + 1) || (node.dotIndex = '');
+                node.klass = _this.getIcon();
+                aNode.push(node);
+            })
+            if (this.direction == 'left' || this.direction == 'up') {
+                aNode = aNode.reverse();
+            }
+            return aNode;
         },
-        showPager() {
-            return !!this.pager.total;
+        nodeClass: (vm) => {
+            var result = [];
+            vm.node.forEach(function(node, i) {
+                var klass = ['vp-tl-' + vm.direction];
+                i == 0 && klass.push('vp-tl-first');
+                i == vm.node.length - 1 && klass.push('vp-tl-last');
+                var index = vm.direction == 'left' || vm.direction == 'up' ? vm.node.length - i - 1 : i;
+                index <= vm.cur && klass.push('vp-tl-active');
+                index == vm.cur && klass.push('vp-tl-cur');
+                result.push(klass.join(' '));
+            })
+            return result;
         },
-        propsUpdate() {
-            return this.total + '&' + this.current + '&' + this.volumn;
+        lineClass: (vm) => {
+            return { 'vp-tl-horizon': vm.direction == 'right' || vm.direction == 'left', 'vp-tl-line-small': vm.size == 'small' };
         }
     },
-    watch: {
-        'propsUpdate': function() {
-            this.update();
+    methods: {
+        getStatus(index, current) {
+            return index == current ? nodeStatus.CURRENT : (index > current ? nodeStatus.TODO : nodeStatus.FINISHED);
+        },
+        getIcon(status) {
+
+            switch (status) {
+                case nodeStatus.FINISHED:
+                    break;
+                case nodeStatus.CURRENT:
+                    break;
+                default:
+                    break;
+            }
+        },
+        onClick(index) {
+            this.$emit('nodeClick', index);
         }
     }
 }
-export default Pager;
+export default Timeline;
 </script>
