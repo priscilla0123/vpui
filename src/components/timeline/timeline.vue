@@ -1,7 +1,6 @@
 <template>
-    <div class="vp-tl-line" :class="lineClass"> 
-        <div class="vp-tl-item" v-for="(n,i) in aNode" :class="nodeClass[i]" :style="nodeStyle">
-             
+    <div class="vp-tl-line" :class="lineClass">
+        <div class="vp-tl-item" v-for="(n,i) in aNode" :class="nodeClass[i]">
             <div class="vp-tl-point" @click="onClick(i)">
                 <slot :name="'icon'+i">
                     <div class="vp-tl-dot">{{n.dotIndex}}</div>
@@ -19,6 +18,7 @@
 <style>
 .vp-tl-line .vp-tl-item {
     position: relative;
+    align-items: stretch;
 }
 
 .vp-tl-item.vp-tl-right:before,
@@ -26,8 +26,8 @@
     content: '';
     position: absolute;
     top: 50%;
-    right: -35px;
-    left: 35px;
+    right: -50%;
+    left: 50%;
     margin-top: -1px;
     margin-left: 4px;
     margin-right: 49px;
@@ -68,8 +68,10 @@
 .vp-tl-point {
     width: 24px;
     height: 24px;
-    position: relative;
-    top: 50%; 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -35px;
     margin-top: -13px;
     z-index: 1;
     cursor: pointer;
@@ -77,7 +79,7 @@
 
 .vp-tl-line-small .vp-tl-point {
     transform: scale(0.7, 0.7);
-    margin-left: -2px;
+    margin-left: -42px;
 }
 
 .vp-tl-dot {
@@ -100,17 +102,16 @@
     background-color: #108ee9;
     color: white;
 }
-
-.vp-tl-line-small .vp-tl-dot {
+.vp-tl-line-small .vp-tl-dot{
     font-size: 14px;
 }
 
 
 .vp-tl-label {
-    position: relative;
+    position: absolute;
     top: 50%;
-    left: 35px;
-    margin-top: -26px;
+    left: 50%;
+    margin-top: -15px;
     line-height: 30px;
     font-size: 14px;
     color: rgba(0, 0, 0, 0.43);
@@ -143,31 +144,17 @@
 .vp-tl-remark {
     font-size: 12px;
     color: rgba(0, 0, 0, 0.23);
-    line-height: 16px; 
+    line-height: 16px;
+    width: 120px;
 }
 
 .vp-tl-horizon {
+    display: flex;
     height: 100px;
-    display: inline-flex;
 }
 
 .vp-tl-horizon .vp-tl-item {
-    display: inline-block;
-    height: 100px;
-}
-
-.vp-tl-flex {
-    display: flex;
-}
-
-.vp-tl-flex .vp-tl-item {
     flex: 1;
-    align-items: stretch;
-} 
-
-.vp-tl-auto .vp-tl-label{
-    padding: 0 35px;
-    left: auto;
 }
 </style>
 <script>
@@ -268,14 +255,8 @@ var Timeline = {
             })
             return result;
         },
-        nodeStyle: (vm) => {
-            if (vm.width.indexOf('px')) {
-                return 'width:' + vm.width;
-            }
-            return '';
-        },
         lineClass: (vm) => {
-            return { 'vp-tl-horizon': vm.direction == 'right' || vm.direction == 'left', 'vp-tl-line-small': vm.size == 'small', 'vp-tl-flex': !vm.width || vm.width == 'flex' , 'vp-tl-auto': vm.width == 'auto' };
+            return { 'vp-tl-horizon': vm.direction == 'right' || vm.direction == 'left', 'vp-tl-line-small': vm.size == 'small' };
         }
     },
     methods: {
