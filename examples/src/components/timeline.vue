@@ -1,179 +1,289 @@
 <template>
     <div>
-        <div style='padding:20px 0;text-align:center'>
-            <btn @click="changeDir(0)" :type="dir[0]?'main':'plain'">Right</btn>
-            <btn @click="changeDir(1)" :type="dir[1]?'main':'plain'">Left</btn>
-            <btn @click="changeDir(2)" :type="dir[2]?'main':'plain'">Down</btn>
-            <btn @click="changeDir(3)" :type="dir[3]?'main':'plain'">Up</btn>
-        </div>        
-        <div class="example-box">
-            <vp-timeline :type="exp1.icon" :node="node" :current="2" :direction="direction" @nodeClick="exp1.click"></vp-timeline>
-            <div class="example-remark">
-                <div class="example-title">
-                    <span>Base</span>
-                </div>
-                <div class="example-memo">
-                    <btn v-for="(btn,i) in exp1.aType" @click="exp1click(i)" :type="exp1.btnType[i]?'main':'plain'">{{btn}}</btn>
-                </div>
+        <input type="text" style="width:300px" v-model="address" />
+        <button type="button" @click="locate">locate</button>
+        <div><span class="lg-switch">
+            <input type="checkbox" id="mark" @click="onSwitch()" v-model="game.mark"/>
+            <label for="mark">MARK</label>
+            <label for="mark">MARK</label>
+        </span></div>
+        <div id="game">
+            <div class="board">
+                <ul v-for="(line,i) in game.board">
+                    <li v-for="(cell,j) in line" :class="cell.status" @click="cellClick(i,j)" v-html="cell.status=='close'?'':cell.text"></li>
+                </ul>
             </div>
         </div>
-        <div class="example-box">
-            <vp-timeline size="small" :node="node" :current="2" :direction="direction"></vp-timeline>
-            <div class="example-remark">
-                <div class="example-title">
-                    <span>Small</span>
-                </div>
-            </div>
-        </div>
-        <div class="example-box">
-            <vp-timeline type="userdefine" :node="node" :current="2" :direction="direction">
-                <span v-for="(n,i) in node" :slot="'icon'+i" class="lg-i lg-ihollowcheck lg-color-success" style="font-size:23px"></span>
-                <div v-for="(n,i) in node" :slot="'remark'+i">
-                    <div class="lg-color-success" style="line-height:16px;font-size:12px">{{n.remark}}</div>
-                </div>
-            </vp-timeline>
-            <div class="example-remark">
-                <div class="example-title">
-                    <span>Userdefine</span>
-                </div>
-            </div>
-        </div>
-        <div class="example-box">
-            <vp-timeline :node="node" :width="exp4.width" :current="2" :direction="direction"></vp-timeline>
-            <div class="example-remark">
-                <div class="example-title">
-                    <span>Step Width</span>
-                </div>
-                <div class="example-memo">
-                    <btn v-for="(btn,i) in exp4.aType" @click="exp4click(i)" :type="exp4.btnType[i]?'main':'plain'">{{btn}}</btn>
-                </div>
-            </div>
-        </div>
-        <div class="example-box">
-            <vp-timeline :node="node" :current="current" :direction="direction">
-                <div v-for="(n,i) in node" :slot="'content'+i">
-                    <div style="text-align:center;font-size:20px;font-weight:bold;line-height:40px;padding:20px 0">step:{{i+1}}</div>
-                </div>
-            </vp-timeline>
-            <div class="example-remark">
-                <div class="example-title">
-                    <span>Progress Content</span>
-                </div>
-                <div class="example-memo">                    
-                    <btn @click="exp5click(0)" type="main">Previous</btn>
-                    <btn @click="exp5click(1)" type="main">Next</btn>
-                </div>
-            </div>
-        </div>
-        </canvas>
+        <div id="map" style="height:600px;margin:16px"></div>
     </div>
 </template>
 <style>
-.example-box {
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 3px;
-    padding: 15px;
-    margin: 15px;
-    min-height: 500px;
+.districtPoint {
+    position: absolute;
+    background-color: cornflowerblue;
+    height: 70px;
+    width: 70px;
+    border-radius: 45px;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
 }
 
-.example-remark {
-    padding-left: 10px;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-    margin-top: 10px;
+.districtPoint.active {
+    background-color: orange;
+    z-index: 100 !important;
 }
 
-.example-title {
-    height: 20px;
-    line-height: 0;
-}
-
-.example-title span {
-    font-size: 16px;
-    padding: 0 10px;
-    color: rgba(0, 0, 0, 0.6);
+.districtPoint span {
+    color: white;
     font-weight: bold;
-    background-color: white;
+}
+
+#game {
+    border: 1px solid rgba(245, 212, 207, 1);
+    padding: 10px;
+    margin: 10px;
+    height: 300px;
+    width: 300px;
+    border-radius: 15px;
+}
+
+.board {
+    display: flex;
+    flex-direction: column;
+}
+
+.board ul {
+    display: flex;
+}
+
+.board ul li {
+    display: inline;
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    line-height: 30px;
+    box-sizing: border-box;
+    border: 2px solid white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.close {
+    background-color: rgba(242, 156, 177, 1);
+}
+
+.empty {
+    background-color: rgba(249, 204, 226, 1);
+}
+
+.bomb {
+    background-color: red;
+}
+.sign{
+    position: relative;
+}
+
+.sign:after {
+    content: ''; 
+    width: 0;
+    height: 0;
+    border-top:6px solid transparent;
+    border-bottom:6px solid transparent;
+    border-left:11px solid red;
+    display: inline-block;
+    top:5px;
+    left: 10px;
+    position: absolute;
+}
+
+.sign:before {
+    content: ''; 
+    height: 19px;
+    width: 1px;
+    background-color: black;
+    right:4px;
+    top:4px;
+    display: inline-block;
+    position: relative;
 }
 </style>
 <script>
 import Vue from 'vue';
-import {
-    Timeline,
-    Button
-} from 'vpui';
+import { DistrictOverlay } from './districtoverlay.vue';
 
 export default {
-    components: {
-        "vp-timeline": Timeline,
-        "btn": Button
-    },
     data() {
         return {
-            dir:[0,0,1,0],
-            directionType:['right','left','down','up'],
-            direction:'down',
-            exp1: {
-                btnType: [0, 1],
-                icon: 'number',
-                aType: ['dot', 'number'],
-                click(index) {
-                    alert('click node:' + (index + 1))
-                }
-            },
-            exp4: {
-                btnType: [0, 1, 0, 0],
-                width: 'auto',
-                aType: ['flex', 'auto', '150px', '200px']
-            },
-            exp5: {
-                btnType: [1, 0],
-                width: 'auto',
-                aType: ['flex', 'auto', '150px', '200px']
-            },
-            node: [{
-                title: 'Start'
+            address: '',
+            district: [{
+                name: '上海市黄浦区',
+                displayName: '黄浦',
+                store: 100,
+                people: 1800,
+                lng: 121.496072,
+                lat: 31.227203
             }, {
-                title: 'Second',
-                remark: '2017-09-09 12:00:00'
+                name: '上海市普陀区',
+                displayName: '普陀',
+                store: 200,
+                people: 1700,
+                lng: 121.398443,
+                lat: 31.263743
             }, {
-                title: 'Third',
-                remark: '2017-09-09 12:00:00'
+                name: '上海市静安区',
+                displayName: '静安',
+                store: 300,
+                people: 1880,
+                lng: 121.454756,
+                lat: 31.235381
             }, {
-                title: 'Fourth',
-                remark: '2017-09-09'
+                name: '上海市徐汇区',
+                displayName: '徐汇',
+                store: 402,
+                people: 18300,
+                lng: 121.446235,
+                lat: 31.169152
             }, {
-                title: 'Last',
-                remark: '2017-09-09 12:00:00'
+                name: '上海市浦东新区',
+                displayName: '浦东',
+                store: 503,
+                people: 1850,
+                lng: 121.638481,
+                lat: 31.230895
             }],
-            current: 2
+            game: {
+                boardWidth: 10,
+                board: [],
+                bombCount: 20,
+                bombs: [],
+                marks: [],
+                mark: true
+            }
         }
     },
     methods: {
-        exp1click(index) {
-            this.setBtn(this.exp1, index);
-            this.exp1.icon = this.exp1.aType[index];
+        locate() { //定位地址 
+            var myGeo = new BMap.Geocoder();
+            myGeo.getPoint(this.address, function(point, adderss) {
+                if (point) {
+                    console.log(point.lng, point.lat);
+                } else {
+                    alert('定位失败，请重新输入详细地址！');
+                }
+            });
         },
-        exp4click(index) {
-            this.setBtn(this.exp4, index);
-            this.exp4.width = this.exp4.aType[index];
+        boundary(DistrictOverlay) {
+            DistrictOverlay.boundary(DistrictOverlay._name);
         },
-        exp5click(index) {
-            if (index) {
-                this.current != this.node.length - 1 && this.current++;
-            } else {
-                this.current != 0 && this.current--;
+        gameInit() {
+            this.game.bombs = this.initBomb();
+            this.game.board = new Array();
+            for (var i = 0; i < this.game.boardWidth; i++) {
+                this.game.board[i] = new Array();
+                for (var j = 0; j < this.game.boardWidth; j++) {
+                    this.game.board[i][j] = {
+                        status: 'close',
+                        type: 'empty'
+                    };
+                    if (this.game.bombs.indexOf(i * this.game.boardWidth + j) >= 0) {
+                        this.game.board[i][j].type = "bomb"; 
+                    }
+                }
+            }
+            for (var i = 0; i < this.game.boardWidth; i++) {
+                for (var j = 0; j < this.game.boardWidth; j++) {
+                    this.game.board[i][j].text = this.initCellNum(i, j);
+                }
             }
         },
-        setBtn(target, index) {
-            target.btnType = [0, 0, 0, 0];
-            target.btnType[index] = 1;
+        cellClick(i, j) {
+            var temp = this.game.board[i];
+            if (this.game.mark) {
+                if (temp[j].status == 'close'){
+                    temp[j].status = 'sign';
+                    this.game.marks.push(i*10+j);
+                    this.game.marks.sort();
+                    this.win();
+                }else if(temp[j].status != 'empty'){
+                    temp[j].status = 'close';
+                    var index=this.game.marks.indexOf(i*10+j);
+                    this.game.marks.splice(index,1);
+                }
+            } else {
+                if (temp[j].status == 'close') {
+                    if(temp[j].type=='bomb'){
+                        this.gameover();
+                    }
+                    temp[j].status = temp[j].type; 
+                }
+            }
+            Vue.set(this.game.board, i, temp);
         },
-        changeDir(index){
-            this.dir=[0,0,0,0];
-            this.dir[index]=1;
-            this.direction=this.directionType[index];
+        onSwitch(val) {
+            if (this.game.mark) {
+                this.game.mark = true;
+            } else {
+                this.game.mark = false;
+            }
+        },
+        initBomb() {
+            var repo = [];
+            for (var i = 0; i < this.game.boardWidth * this.game.boardWidth; i++) {
+                repo.push(i);
+            }
+            var bombs = new Array();
+            for (var i = 0; i < this.game.bombCount; i++) {
+                var index = Math.round(Math.random() * (repo.length - 1));
+                bombs.push(repo.splice(index, 1)[0]);
+            }
+            console.log(repo);
+            console.log(bombs);
+            return bombs.sort();
+        },
+        initCellNum(x, y) {
+            var _this = this;
+            if (this.game.bombs.indexOf(x * 10 + y) >= 0) {
+                return '';
+            }
+            var w = this.game.boardWidth;
+            var arounds = [{ x: x - 1, y: y - 1 }, { x: x - 1, y: y }, { x: x - 1, y: y + 1 }, { x: x, y: y - 1 }, { x: x, y: y + 1 }, { x: x + 1, y: y - 1 }, { x: x + 1, y: y }, { x: x + 1, y: y + 1 }];
+            var count = arounds.filter(function(cell, index) {
+                if (cell.x < 0 || cell.y < 0 || cell.x == w || cell.y == w) {
+                    return false;
+                }
+                return _this.game.bombs.indexOf(cell.x * w + cell.y) >= 0;
+            }).length;
+            return count == 0 ? '' : count;
+        },
+        gameover(){
+            var _this=this;
+            this.game.board.forEach(function(line,i){
+                var temp=line;
+                line.forEach(function(cell,j){
+                    temp[j]=cell;
+                    temp[j].status=cell.type;
+                    Vue.set(_this.game.board, i, temp);
+                })
+            })
+        },
+        win(){
+            if(this.game.bombs.join(',')==this.game.marks.join(',')){
+                alert('you win');
+            }
+
         }
+    },
+    mounted() {
+        var _this = this;
+        var mp = new BMap.Map("map");
+        mp.enableScrollWheelZoom(true);
+        mp.centerAndZoom('上海市', 15);
+        this.district.forEach(function(district) {
+            var myCompOverlay = new DistrictOverlay(new BMap.Point(district.lng, district.lat), district.name, district.displayName, '', _this.boundary);
+            mp.addOverlay(myCompOverlay);
+        })
+        this.gameInit();
     }
 }
 </script>
