@@ -8,6 +8,7 @@
 </template>
 <script>
     let columns = [];
+    let reResizeTimer = {};
     export default{
         name: 'waterfall',
         props: {
@@ -21,14 +22,18 @@
             appendColumn(){
                 let columnSize = this.column;
                 let el = this.$refs.waterFallColumnWrap;
-                let columnWidth = this.$el.clientWidth / columnSize + 'px';
-                while(columnSize > 0){
+                //let columnWidth = this.$el.clientWidth / columnSize + 'px';
+                let columnWidth = (Math.ceil((1 / columnSize) * 10000)) / 100 + "%";
+                console.log(columnWidth);
+
+                let index = 0;
+                while(index < columnSize){
                     let div = document.createElement('div');
-                    div.className = "vp-water-fall-column column-" + columnSize;
+                    div.className = `vp-water-fall-column column-${index}`;
                     div.style.width = columnWidth;
                     el.appendChild(div);
                     columns.push(div);
-                    columnSize-- ;
+                    index++ ;
                 }
             },
             
@@ -56,7 +61,19 @@
                         columns[index + 1] = tempColumn;
                     }
                 }
-            }
+            },
+
+            reWidth(){
+               /* clearTimeout(reResizeTimer);
+                let self = this;
+                reResizeTimer = setTimeout(function(){
+                    let columnSize = self.column;
+                    let columnWidth = self.$el.clientWidth / columnSize + 'px';
+                    columns.forEach((column) => {
+                        column.style.width = columnWidth;
+                    });
+                }, 200)*/
+            }   
 
         },
         mounted(){
@@ -64,6 +81,9 @@
             this.$nextTick(() => {
                 this.cloneItemToCloumn();
             });
+        },
+        deactivated(){
+        
         }
     }
 </script>
@@ -76,5 +96,8 @@
     }
     .vp-water-fall-temp{
         display: none;
+    }
+    .vp-water-fall-column-wrap{
+        width: 100%;
     }
 </style>

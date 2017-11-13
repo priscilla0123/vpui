@@ -6,7 +6,7 @@ import Mask from './components/mask';
 import Alert from './components/alert';
 import Picker from './components/picker';
 import CityPicker from './components/citypicker';
-import { Timepanel, Datepanel, Datepicker } from './components/datepicker';
+import { Yearpanel, Monthpanel, Datepanel, Timepanel, Yearpicker, Monthpicker, Datepicker } from './components/datepicker';
 import Checkbox from './components/checkbox';
 import Radio from './components/radio';
 import { Tabs, Tab } from './components/tab';
@@ -19,6 +19,8 @@ import Tablepager from './modules/tablepager';
 import Valid from './directives/valid';
 import AutoPosition from './directives/autoposition';
 import Clickoutside from './directives/clickoutside';
+import { Drag, DragDrop } from './directives/drag';
+import Tooltip from './directives/tooltip';
 import Toast from './components/toast';
 import Uploader from './components/uploader';
 import ProgressBar from './components/progressbar';
@@ -26,7 +28,7 @@ import ProgressBar from './components/progressbar';
 import Vue from 'vue';
 
 var Components = [
-    Pager, Datagrid, Checkbox, Radio, Tabs, Tab, Select, Timepanel, Datepanel, Datepicker,WaterFall,Uploader,ProgressBar,Timeline
+    Pager, Datagrid, Checkbox, Radio, Tabs, Tab, Select, Yearpanel, Monthpanel, Datepanel, Timepanel, Yearpicker, Monthpicker, Datepicker, WaterFall,Uploader,ProgressBar,Timeline
 ];
 
 var Modules = [
@@ -35,7 +37,10 @@ var Modules = [
 
 var Directives = [
     Valid,
-    Clickoutside
+    Clickoutside,
+    Drag,
+    DragDrop,
+    Tooltip
 ];
 
 function install(Vue){
@@ -51,6 +56,9 @@ function install(Vue){
 }
 
 export {
+    DragDrop,
+    Drag,
+    Tooltip,
     Clickoutside,
     Valid,
     Pager,
@@ -68,8 +76,12 @@ export {
     Select,
     Picker,
     CityPicker,
-    Timepanel,
+    Yearpanel,
+    Monthpanel,
     Datepanel,
+    Timepanel,
+    Yearpicker,
+    Monthpicker,
     Datepicker,
     Toast,
     WaterFall,
