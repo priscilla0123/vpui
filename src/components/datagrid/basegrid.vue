@@ -327,12 +327,35 @@ var BaseGrid = {
                     }
                 } else if (action.type == 'callback') {
                     el.setAttribute('href', 'javascript:void(0);');
-                    el.addEventListener('click', function() {
+                    el.onclick= function() {
                         vnode.context.$emit('action', action.eventName, data);
-                    })
+                    }
                 }
             },
-            update(el, { value }) {}
+            update(el, { value }, vnode) {
+                var _this = this;
+                var action = value.act,
+                    data = value.item;
+                if (action.disable && action.disable(data)) {
+                    el.style.display = "none";
+                    return;
+                }
+                else{
+                    el.style.display = el.style.display.replace('none','');
+                }
+                if (action.type == 'link') {
+                    var arg = action.render(data);
+                    if (arg) {
+                        el.setAttribute('href', arg.url);
+                        el.setAttribute('target', arg.blank ? '_blank' : '');
+                    }
+                } else if (action.type == 'callback') {  
+                    el.setAttribute('href', 'javascript:void(0);');   
+                    el.onclick= function() {
+                        vnode.context.$emit('action', action.eventName, data);
+                    }                    
+                }
+            }
         }
     }
 }

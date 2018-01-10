@@ -6,6 +6,10 @@ import Timepanel from './timepanel.vue'
 import Yearpicker from './yearpicker.vue'
 import Monthpicker from './monthpicker.vue'
 import Datepicker from './datepicker.vue'
+import Datetimepicker from './datetimepicker.vue'
+
+import Daterangepicker from './daterangepicker.vue'
+import Datetimerangepicker from './datetimerangepicker.vue'
 
 export {
     Yearpanel,
@@ -14,5 +18,8 @@ export {
     Timepanel,
     Yearpicker,
     Monthpicker,
-    Datepicker
+    Datepicker,
+    Datetimepicker,
+    Daterangepicker,
+    Datetimerangepicker
 }

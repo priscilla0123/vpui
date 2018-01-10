@@ -7,6 +7,7 @@ import Button from './components/button.vue';
 import Radio from './components/radio.vue';
 import Checkbox from './components/checkbox.vue';
 import Select from './components/select.vue';
+import Dialog from './components/dialog.vue';
 
 import Tab from './components/tab.vue';
 import Pager from './components/pager.vue';
@@ -23,9 +24,14 @@ import Uploader from './components/uploader.vue';
 import ProgressBar from './components/progressbar.vue';
 
 import Tablepager from './modules/tablepager.vue';
+import Radiogroup from './modules/radiogroup.vue';
+import Checkboxgroup from './modules/checkboxgroup.vue';
 
 import Valid from './directives/valid.vue';
 import Clickoutside from './directives/clickoutside.vue';
+import Drag from './directives/drag.vue';
+import DragDrop from './directives/dragDrop.vue';
+import Tooltip from './directives/tooltip.vue';
 
 
 // COMPONENTS
@@ -35,6 +41,7 @@ const com = [
     { path: '/components/radio', component: Radio, text: 'Radio' },
     { path: '/components/checkbox', component: Checkbox, text: 'Checkbox' },
     { path: '/components/select', component: Select, text: 'Select'},
+    { path: '/components/dialog', component: Dialog, text: 'Dialog'},
 
     // groups
     { path: '/components/pager', component: Pager, text: 'Pager' },
@@ -58,13 +65,18 @@ const com = [
 
 // MODULES
 const mod = [
-    { path: '/modules/tablepager', component: Tablepager, text: 'Tablepager', id: 'mod_1' }
+    { path: '/modules/tablepager', component: Tablepager, text: 'Tablepager', id: 'mod_1' },
+    { path: '/modules/radiogroup', component: Radiogroup, text: 'Radiogroup', id: 'mod_2' },
+    { path: '/modules/checkboxgroup', component: Checkboxgroup, text: 'Checkboxgroup', id: 'mod_3' }
 ]
 
 // DIRECTIVES
 const dir = [
     { path: '/directives/valid', component: Valid, text: 'Valid', id: 'dir_1' },
-    { path:'/directives/clickoutside', component: Clickoutside, text: 'Clickoutside', id: 'dir_2' }
+    { path:'/directives/clickoutside', component: Clickoutside, text: 'Clickoutside', id: 'dir_2' },
+    { path:'/directives/drag', component: Drag, text: 'Drag', id: 'dir_3' },
+    { path:'/directives/dragDrop', component: DragDrop, text: 'DragDrop', id: 'dir_4' },
+    { path:'/directives/tooltip', component: Tooltip, text: 'Tooltip', id: 'dir_5'}
 ]
 
 const router = new VueRouter({

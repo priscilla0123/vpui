@@ -18,7 +18,7 @@
         </template>
         <template v-else>
             <svg t="1505701737916" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2898" xmlns:xlink="http://www.w3.org/1999/xlink" width="12" height="12">
-                <path d="M804.562219 227.217978 415.999552 615.749946 219.436758 419.218874 128.936581 509.71905 415.999552 796.782022 895.062396 317.718155Z" p-id="2899" :fill="disabled && checked ? '#D9D9D9' : (disabled ? '#F3F3F3' : '#fff')"></path>
+                <path d="M804.562219 227.217978 415.999552 615.749946 219.436758 419.218874 128.936581 509.71905 415.999552 796.782022 895.062396 317.718155Z" p-id="2899" :fill="disabled && ( checked || state ) ? '#D9D9D9' : (disabled ? '#F3F3F3' : '#fff')"></path>
             </svg>
         </template>
     </span>

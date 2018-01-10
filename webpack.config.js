@@ -42,11 +42,5 @@ module.exports = {
                 loader: 'style-loader!css-loader'
             }
         ]
-    },
-
-    plugins: [
-        new webpack.optimize.CommonsChunkPlugin({
-            name: ['vpui', 'vue'],
-        })
-    ]
+    }
 };

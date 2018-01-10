@@ -30,18 +30,18 @@
 </template>
 <script>
 
-import { calendar, select2Range } from './calendar.js'
+import { calendar } from './calendar.js'
 
 const langArr = {
-    En: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
-    Zh: ['日', '一', '二', '三', '四', '五', '六']
+    en: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+    zh: ['日', '一', '二', '三', '四', '五', '六']
 }
 
 export default {
     name: 'datepanel',
     props: {
         value: {
-            type: Date,
+            type: Date | String,
             default: () => new Date
         },
         today: {
@@ -50,19 +50,17 @@ export default {
         },
         lang: {
             type: String,
-            default: 'En' // En Zh
+            default: 'en' // en zh
         },
         showSimple: {
             type: Boolean,
             default: false
         },
         year: {
-            type: Number | String,
-            default: new Date().getFullYear()
+            type: Number | String
         },
         month: {
-            type: Number | String,
-            default: new Date().getMonth() + 1
+            type: Number | String
         },
         selectRange: {
             type: String | Array
@@ -70,6 +68,7 @@ export default {
     },
     data() {
         return {
+            val: this.value ? new Date(this.value) : new Date(),
             selectPoints: {},
             calendarData: [],
             prevPos: [],
@@ -79,13 +78,13 @@ export default {
     },
     computed: {
         days() {
-            return langArr[this.lang] || langArr['En']
+            return langArr[this.lang] || langArr['en']
         },
         curYear(){
-            return isNaN(this.year) ? new Date().getFullYear() : this.year
+            return  this.year || this.val.getFullYear()
         },
         curMonth(){
-            return isNaN(this.month) ? (new Date().getMonth() + 1) : this.month
+            return this.month || (this.val.getMonth() + 1)
         },
         now() {
             let td = new Date(this.today), cdate = td instanceof Date ? td : new Date();
@@ -100,8 +99,10 @@ export default {
                 this.setRangeAnchor(dateObj);
             } else {
                 this.setActiveDate(dateObj);
-                this.$emit('select', dateObj);
-                this.$emit('input', new Date(dateObj.year, dateObj.month - 1, dateObj.date));
+                let d = this.val, h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
+                let { year, month, date } = dateObj;
+                this.$emit('input', new Date(year, month - 1, date, h, m, s));
+                this.$emit('change', dateObj);
             }
         },
         setActiveDate(obj) {
@@ -181,7 +182,6 @@ export default {
                 })
                 this.calendarData = calendar;
             }
-            // console.log(obj);
         },
         compareItem(o1,o2) {
             let d1 = new Date(o1.year, o1.month - 1, o1.date), d2 = new Date(o2.year, o2.month - 1, o2.date);
@@ -198,8 +198,28 @@ export default {
         }
     },
     created() {
-        this.curDate = this.now.getDate();
-        this.calendarData = calendar(this.curYear, this.curMonth - 1)
+        this.curDate = this.val.getDate() || this.now.getDate();
+        this.calendarData = calendar(this.curYear, this.curMonth - 1);
+        !this.hasChecked && (this.hasChecked = true);
+        this.setActiveDate({ year: this.curYear, month: this.curMonth, date: this.curDate });
+
+        // 打印矩阵
+        /*this.calendarData.forEach(item => {
+            let str = '';
+            item.forEach(it => {
+                str += it.year+'.'+it.month+'.'+it.date + '\t';
+            })
+            console.log(str)
+        })*/
+    },
+    watch: {
+        value(c) {
+            c = !!+c && c instanceof Date ? c : new Date(c);
+            let year = c.getFullYear(), month = c.getMonth() + 1, date = c.getDate();
+            this.curDate = date;
+            this.setActiveDate({ year, month, date })
+            this.val = new Date(c);
+        }
     }
 }
 </script>
@@ -230,8 +250,9 @@ export default {
             display: flex;
             > div {
                 color: #999;
-                height: 20px;
-                line-height: 20px;
+                height: 18px;
+                width: 18px;
+                line-height: 18px;
                 flex: 1;
                 text-align: center;
                 margin: 4px;
