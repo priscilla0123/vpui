@@ -39,6 +39,9 @@ import Checkbox from '../../components/checkbox';
 var Checkboxgroup = {
     name: 'checkboxgroup',
     props: {
+        'value': {
+            required: true
+        },
         'data': {
             type: Array
         },
@@ -58,8 +61,8 @@ var Checkboxgroup = {
     },
     created() {
         var defaultValue = this.init || [];
-        if (typeof defaultValue == 'object') { 
-            this.target =JSON.parse(JSON.stringify(defaultValue));
+        if (typeof defaultValue == 'object') {
+            this.target = JSON.parse(JSON.stringify(defaultValue));
         } else {
             this.target = defaultValue.split(',');
         }
@@ -71,6 +74,15 @@ var Checkboxgroup = {
     },
     components: {
         Checkbox
+    },
+    watch: {
+        value: function(val, oldVal) { 
+            if (typeof val == 'object') {
+                this.target = JSON.parse(JSON.stringify(val));
+            } else {
+                this.target = val.split(',');
+            } 
+        }
     }
 }
 export default Checkboxgroup;
