@@ -288,7 +288,7 @@ export default {
                     mobile: true,
                     house: true,
                     id: 1,
-                    sName: '姓名',
+                    sName: 0,
                     sMoblie: '手机号复旦复华的积分丰厚的交话费的123415465465减肥码<b/>fdfd',
                     sCityName: '城市',
                     sCreateTime: '抽奖时间',

@@ -91,7 +91,7 @@ var BaseGrid = {
             type: Function,
             require: false,
             default: function(data, key) {
-                if (data[key]) {
+                if (data[key]!=undefined) {
                     if (typeof data[key] != 'function' && typeof data[key] != 'object') {
                         return data[key];
                     } else if (data[key].label) {

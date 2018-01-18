@@ -1,46 +1,39 @@
 <template>
-<div class="monthpicker">
-    <div class="input" @click="open = !open">
-        <input type="text" readonly class="input-text" :placeholder="placeholder[0]" :value="begin">
-        <span class="div">-</span>
-        <input type="text" readonly class="input-text" :placeholder="placeholder[1]" :value="end">
-        <span class="picker-icon">
+    <div class="monthpicker">
+        <div class="input" @click="open = !open">
+            <input type="text" readonly class="input-text" :placeholder="placeholder[0]" :value="begin">
+            <span class="div">-</span>
+            <input type="text" readonly class="input-text" :placeholder="placeholder[1]" :value="end">
+            <span class="picker-icon">
             <svg t="1509440982605" class="icon" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4562" xmlns:xlink="http://www.w3.org/1999/xlink" width="22" height="22">
                 <path d="M752 198.2h-58v-50c0-15.4-12.6-28-28-28s-28 12.6-28 28v50H386v-50c0-15.4-12.6-28-28-28s-28 12.6-28 28v50h-58c-79.2 0-144 64.8-144 144v428c0 79.2 64.8 144 144 144h480c79.2 0 144-64.8 144-144v-428c0-79.2-64.8-144-144-144z m88 572c0 23.4-9.2 45.4-25.8 62.2-16.8 16.8-38.8 25.8-62.2 25.8H272c-23.4 0-45.4-9.2-62.2-25.8S184 793.6 184 770.2v-428c0-23.4 9.2-45.4 25.8-62.2 16.8-16.8 38.8-25.8 62.2-25.8h58v42c0 15.4 12.6 28 28 28s28-12.6 28-28v-42h252v42c0 15.4 12.6 28 28 28s28-12.6 28-28v-42h58c23.4 0 45.4 9.2 62.2 25.8 16.8 16.8 25.8 38.8 25.8 62.2v428z" fill="#999" p-id="4563"></path>
                 <path d="M358 436.2h-52c-14.2 0-26 11.6-26 26v52c0 14.4 11.8 26 26 26h52c14.4 0 26-11.6 26-26v-52c0-14.4-11.6-26-26-26zM358 616.2h-52c-14.2 0-26 11.6-26 26v52c0 14.4 11.8 26 26 26h52c14.4 0 26-11.6 26-26v-52c0-14.4-11.6-26-26-26zM538 436.2h-52c-14.2 0-26 11.6-26 26v52c0 14.4 11.8 26 26 26h52c14.4 0 26-11.6 26-26v-52c0-14.4-11.6-26-26-26zM538 616.2h-52c-14.2 0-26 11.6-26 26v52c0 14.4 11.8 26 26 26h52c14.4 0 26-11.6 26-26v-52c0-14.4-11.6-26-26-26zM718 436.2h-52c-14.2 0-26 11.6-26 26v52c0 14.4 11.8 26 26 26h52c14.4 0 26-11.6 26-26v-52c0-14.4-11.6-26-26-26zM718 616.2h-52c-14.2 0-26 11.6-26 26v52c0 14.4 11.8 26 26 26h52c14.4 0 26-11.6 26-26v-52c0-14.4-11.6-26-26-26z" fill="#999" p-id="4564"></path>
             </svg>
         </span>
-    </div>
-    <transition name="dropDown">
-    <div class="drop-box" v-if="open">
-        <div class="header-group">
-            <div class="picker-header" v-for="(it, i) in 2">
-                <span><i class="picker-icon left" @click="flush(i, '-')"></i></span>
-                <span @click="changePanel(i)"><em>{{ title[i] }}</em></span>
-                <span><i class="picker-icon right" @click="flush(i, '+')"></i></span>
-            </div>
         </div>
-        <div class="body-group">
-            <div class="panel-group">
-                <div v-for="(it,i) in 2" :class="line(i)">
-                    <yearrangepanel v-model="range[i]" v-if="showRange[i]" @change="checkPanel(3, i)" class="panel"></yearrangepanel>
-                    <yearpanel v-model="year[i]" v-else-if="showYear[i]" @change="checkPanel(2, i)" class="panel"></yearpanel>
-                    <monthpanel v-model="month[i]" v-else-if="showMonth[i]" @change="checkPanel(1, i)" class="panel" :lang="lang"></monthpanel>
+        <transition name="dropDown">
+            <div class="drop-box" v-if="open">
+                <div class="header-group">
+                    <div class="picker-header" v-for="(it, i) in 2">
+                        <span><i class="picker-icon left" @click="flush(i, '-')"></i></span>
+                        <span @click="changePanel(i)"><em>{{ title[i] }}</em></span>
+                        <span><i class="picker-icon right" @click="flush(i, '+')"></i></span>
+                    </div>
+                </div>
+                <div class="body-group">
+                    <div class="panel-group">
+                        <div v-for="(it,i) in 2" :class="line(i)">
+                            <yearrangepanel v-model="range[i]" v-if="showRange[i]" @change="checkPanel(3, i)" class="panel"></yearrangepanel>
+                            <yearpanel v-model="year[i]" v-else-if="showYear[i]" @change="checkPanel(2, i)" class="panel"></yearpanel>
+                            <monthpanel v-model="month[i]" v-else-if="showMonth[i]" @change="checkPanel(1, i)" class="panel" :lang="lang"></monthpanel>
+                        </div>
+                    </div>
+                    <daterangepanel v-model="val" :showSimple="showSimple" :prevMonth="beginMonth" :nextMonth="endMonth" :validRange="validRange" :lang="lang" @change="change"></daterangepanel>
                 </div>
             </div>
-            <daterangepanel
-                v-model="val"
-                :showSimple="showSimple"
-                :prevMonth="beginMonth"
-                :nextMonth="endMonth"
-                :validRange="validRange"
-                :lang="lang"
-                @change="change"></daterangepanel>
-        </div>
+        </transition>
     </div>
-    </transition>
-</div>
-</div>
+    </div>
 </template>
 <script>
 import Daterangepanel from './daterangepanel.vue'
@@ -66,7 +59,7 @@ const MONTH = {
 
 const PLACEHOLDER = {
     en: ['Begin Date', 'End Date'],
-    zh: ['开始日期','结束日期']
+    zh: ['开始日期', '结束日期']
 }
 
 export default {
@@ -123,33 +116,35 @@ export default {
     computed: {
         begin() {
             let b;
-            if(this.val[0] instanceof Date) {
+            if (this.val[0] instanceof Date) {
                 b = this.val[0].toLocaleDateString().split('/');
-            } else if(typeof this.val[0] === 'string') {
+            } else if (typeof this.val[0] === 'string') {
                 b = this.val[0].split('/');
             }
             return b ? this.format.replace('YYYY', b[0]).replace('MM', quantity(b[1])).replace('DD', quantity(b[2])) : '';
         },
         end() {
             let e;
-            if(this.val[1] instanceof Date) {
+            if (this.val[1] instanceof Date) {
                 e = this.val[1].toLocaleDateString().split('/');
-            } else if(typeof this.val[1] === 'string') {
+            } else if (typeof this.val[1] === 'string') {
                 e = this.val[1].split('/');
             }
             return e ? this.format.replace('YYYY', e[0]).replace('MM', quantity(e[1])).replace('DD', quantity(e[2])) : '';
         },
         monthArr() {
-            if('undefined' === typeof this.lang) return [];
-            return ['en','zh'].indexOf(this.lang) > -1 ? MONTH[this.lang] : MONTH['en']
+            if ('undefined' === typeof this.lang) return [];
+            return ['en', 'zh'].indexOf(this.lang) > -1 ? MONTH[this.lang] : MONTH['en']
         },
         title() {
             let tits = new Array(2);
-            for(let i = 0; i < 2; i++) {
-                let year = this.year[i], month = this.month[i] - 1, range = this.range[i];
-                if(this.showRange[i] || this.showYear[i]) {
+            for (let i = 0; i < 2; i++) {
+                let year = this.year[i],
+                    month = this.month[i] - 1,
+                    range = this.range[i];
+                if (this.showRange[i] || this.showYear[i]) {
                     tits[i] = range;
-                } else if(this.showMonth[i]) {
+                } else if (this.showMonth[i]) {
                     tits[i] = year;
                 } else {
                     tits[i] = (this.monthArr[month] + ' ') + year
@@ -158,17 +153,23 @@ export default {
             return tits;
         },
         placeholder() {
-            return ['en','zh'].indexOf(this.lang) > -1 ? PLACEHOLDER[this.lang] : PLACEHOLDER['en'];
+            return ['en', 'zh'].indexOf(this.lang) > -1 ? PLACEHOLDER[this.lang] : PLACEHOLDER['en'];
         }
     },
     watch: {
         value(c) {
-            if(!(c instanceof Array)) return ;
-            let st = new Date(c[0]), et = new Date(c[1]);
-            if(!!+st && !!+et && st instanceof Date && et instanceof Date) {
+            if (!(c instanceof Array)) return;
+            let st = new Date(c[0]),
+                et = new Date(c[1]); 
+            if (!!+st && !!+et && st instanceof Date && et instanceof Date) { 
                 this.$nextTick(() => {
                     this.val = c;
-                    let stY = st.getFullYear(), stM = st.getMonth() + 1, etY = et.getFullYear(), etM = et.getMonth() + 1, stR = (stY - stY % 10) + '~' + (stY - stY % 10 + 9), etR = (etY - etY % 10) + '~' + (etY - etY % 10 + 9)
+                    let stY = st.getFullYear(),
+                        stM = st.getMonth() + 1,
+                        etY = et.getFullYear(),
+                        etM = et.getMonth() + 1,
+                        stR = (stY - stY % 10) + '~' + (stY - stY % 10 + 9),
+                        etR = (etY - etY % 10) + '~' + (etY - etY % 10 + 9)
                     this.beginMonth = stY + '/' + stM;
                     this.endMonth = etY + '/' + etM;
                     this.year = [stY, etY];
@@ -178,8 +179,10 @@ export default {
             } else {
                 this.$nextTick(() => {
                     this.val = c;
-                    let sy = year, ey = sy + parseInt((month + 2) / 12),
-                        sm = month + 1, em = (month + 2) % 12,
+                    let sy = year,
+                        ey = sy + parseInt((month + 2) / 12),
+                        sm = month + 1,
+                        em = (month + 2) % 12,
                         sr = (sy - sy % 10) + '~' + (sy - sy % 10 + 9),
                         er = (ey - ey % 10) + '~' + (ey - ey % 10 + 9);
                     this.beginMonth = sy + '/' + sm;
@@ -191,7 +194,16 @@ export default {
             }
         },
         val(c) {
-            this.$emit('input', c);
+            let formatDate = c;
+            if (c[0] && c[1] && c[0].indexOf('/')>0 &&c[1].indexOf('/')>0) {
+                let aBegin = c[0].split('/');
+                let aEnd = c[1].split('/');
+                let sBegin = this.format.replace('YYYY', aBegin[0]).replace('MM', quantity(aBegin[1])).replace('DD', quantity(aBegin[2]));
+                let sEnd = this.format.replace('YYYY', aEnd[0]).replace('MM', quantity(aEnd[1])).replace('DD', quantity(aEnd[2]));
+                formatDate[0] = sBegin;
+                formatDate[1] = sEnd;
+            }
+            this.$emit('input', formatDate);
         },
         month(c) {
             this.$nextTick(() => {
@@ -209,33 +221,35 @@ export default {
         },
         flush(index, operator) {
             let arr = [];
-            if(this.showRange[index]) { //世纪
+            if (this.showRange[index]) { //世纪
                 arr = [...this.range];
-                let rg = +arr[index].split('~')[0], year = parseInt(rg / 100) * 100;
-                if(operator === '+') {
+                let rg = +arr[index].split('~')[0],
+                    year = parseInt(rg / 100) * 100;
+                if (operator === '+') {
                     year += 100;
                 } else {
                     year -= 100;
                 }
                 arr.splice(index, 1, year + '~' + (year + 99));
                 this.range = arr;
-            } else if(this.showYear[index]) { //年
+            } else if (this.showYear[index]) { //年
                 arr = [...this.year];
                 let year = arr[index];
-                if(operator === '+') {
+                if (operator === '+') {
                     year += 10;
                 } else {
                     year -= 10;
                 }
-                let rg = [...this.range], unit = year - year % 10;
+                let rg = [...this.range],
+                    unit = year - year % 10;
                 arr.splice(index, 1, year);
                 rg.splice(index, 1, unit + '~' + (unit + 9))
                 this.year = arr;
                 this.range = rg;
-            } else if(this.showMonth[index]) { //月
+            } else if (this.showMonth[index]) { //月
                 arr = [...this.year];
                 let year = arr[index];
-                if(operator === '+') {
+                if (operator === '+') {
                     year += 1;
                 } else {
                     year -= 1;
@@ -244,16 +258,18 @@ export default {
                 this.year = arr;
             } else { //日
                 arr = [...this.month];
-                let month = arr[index], yr = [...this.year], year = yr[index];
-                if(operator === '+') {
-                    if(month > 11) {
+                let month = arr[index],
+                    yr = [...this.year],
+                    year = yr[index];
+                if (operator === '+') {
+                    if (month > 11) {
                         month = 1;
                         year++;
                     } else {
                         month += 1;
                     }
                 } else {
-                    if(month < 2) {
+                    if (month < 2) {
                         month = 12;
                         year--;
                     } else {
@@ -269,13 +285,13 @@ export default {
         changePanel(index) {
             let arr = [];
             this.show = true;
-            if(this.showRange[index]) {
-                return ;
-            } else if(this.showYear[index]) {
+            if (this.showRange[index]) {
+                return;
+            } else if (this.showYear[index]) {
                 arr = [...this.showRange];
                 arr[index] = !arr[index];
                 this.showRange = arr;
-            } else if(this.showMonth[index]) {
+            } else if (this.showMonth[index]) {
                 arr = [...this.showYear];
                 arr[index] = !arr[index];
                 this.showYear = arr;
@@ -287,7 +303,7 @@ export default {
         },
         checkPanel(pid, index) {
             let arr = [];
-            switch(pid) {
+            switch (pid) {
                 case 1:
                     arr = [...this.showMonth];
                     arr[index] = false;
@@ -310,17 +326,18 @@ export default {
                         this.year = arr;
                     })
                     break;
-                default: break;
+                default:
+                    break;
             }
         },
         line(index) {
             let flag = new Array(2);
-            for(let i = 0; i < 2; i++) {
+            for (let i = 0; i < 2; i++) {
                 flag[i] = this.showMonth[i] | this.showYear[i] | this.showRange[i];
             }
-            if(flag[0]) {
+            if (flag[0]) {
                 return 'line-right'
-            } else if(!flag[0] && flag[1]) {
+            } else if (!flag[0] && flag[1]) {
                 return 'line-left'
             } else {
                 return ''
@@ -330,7 +347,7 @@ export default {
     created() {
         let begin, end;
         this.val = (this.value instanceof Array && this.value.length) ? this.value : new Array(2);
-        if(this.val instanceof Array && this.val.length === 2 && this.val[0] && this.val[1]) {
+        if (this.val instanceof Array && this.val.length === 2 && this.val[0] && this.val[1]) {
             begin = new Date(this.val[0]);
             end = new Date(this.val[1]);
             this.year = [begin.getFullYear(), end.getFullYear()];
@@ -351,9 +368,11 @@ export default {
 ::-webkit-input-placeholder {
     color: #ccc;
 }
+
 :-moz-placeholder {
     color: #ccc;
 }
+
 ::-moz-placeholder {
     color: #ccc;
 }
@@ -366,7 +385,7 @@ export default {
         display: flex;
         justify-content: space-between;
         border-bottom: 1px solid #e1e1e1;
-        > div {
+        >div {
             width: 206px;
         }
     }
@@ -376,7 +395,7 @@ export default {
         z-index: 20;
         display: table;
         justify-content: space-between;
-        > div {
+        >div {
             display: table-cell;
             width: 50%;
             box-sizing: border-box;
@@ -400,7 +419,7 @@ export default {
             font-style: normal;
             cursor: pointer;
         }
-        > span {
+        >span {
             display: block;
             flex: 1;
             text-align: center;
@@ -464,7 +483,9 @@ export default {
         cursor: pointer;
         display: inline-block;
         margin-right: 0;
-        &:focus, &:active, &:visited {
+        &:focus,
+        &:active,
+        &:visited {
             box-shadow: none;
             outline: none;
             border: none;
@@ -491,6 +512,7 @@ export default {
 .datepicker {
     position: relative;
 }
+
 .date-panel {
     padding: 10px;
     box-sizing: border-box;
@@ -519,7 +541,7 @@ export default {
 .drop-box {
     position: absolute;
     margin-top: 2px;
-    box-shadow: 0 1px 6px rgba(0,0,0,.2);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, .2);
     background-color: #fff;
     z-index: 10;
 }
@@ -541,7 +563,7 @@ export default {
     }
     &-enter,
     &-appear,
-    &-leave-to{
+    &-leave-to {
         opacity: 0;
         transform-origin: center top;
         transform: scaleY(.8);
