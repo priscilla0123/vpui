@@ -69,10 +69,11 @@ var Tablepager = {
             this.$emit('to', current,this.pageSize); 
             this.cur=current;
         },
-        changeSize(size) {
+        changeSize(size) { 
             this.pageSize=size; 
             this.$refs.pager.shortcut='';
-            this.$refs.pager.to(1);             
+            this.$emit('to', 1,size); 
+            this.cur=1;             
         } 
     },
     data() {
